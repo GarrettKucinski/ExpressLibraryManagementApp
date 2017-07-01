@@ -1,10 +1,13 @@
 'use strict';
 
 const express = require('express');
-const router = require('express').Router();
+const router = express.Router();
+const Book = require('../models').Book;
 
 router.get('/', (req, res) => {
-    res.render('main');
+    Book.findAll(Book.id).then((books) => {
+        res.render('main');
+    });
 });
 
 module.exports = router;
