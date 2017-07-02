@@ -9,10 +9,10 @@ block content
     table
         thead
             tr
-            for column in columns
-                th= column
+                for column in columns
+                    th= column
         tbody
             for item in items 
                 tr
-                for column in columns
-                    td= item[column]
+                    for column in columns
+                        td= item.dataValues[column]
