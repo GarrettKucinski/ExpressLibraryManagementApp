@@ -5,6 +5,7 @@ const router = express.Router();
 const Loan = require('../models').Loan;
 
 const title = "Loans";
+const content = 'loans';
 
 router.get('/', (req, res, next) => {
     Loan.findAll({
@@ -17,11 +18,13 @@ router.get('/', (req, res, next) => {
         ]
     }).then((loans) => {
         const loan = loans[0].dataValues;
-        const columns = Object.keys(loan).filter((column) => {
-            return column !== 'id';
-        });
-        res.render('all', { items: loans, columns, title });
+        const columns = Object.keys(loan);
+        res.render('all', { items: loans, columns, title, content });
     });
+});
+
+router.get('/new', (req, res, next) => {
+    res.render('new', { content });
 });
 
 module.exports = router;

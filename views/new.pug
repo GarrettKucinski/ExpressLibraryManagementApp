@@ -1,0 +1,8 @@
+extends ./layout.pug
+block content
+    if content === 'loans'
+        include ./includes/_new_loan.pug
+    else if content === 'books'
+        include ./includes/_new_book.pug
+    else
+        include ./includes/_new_patron.pug

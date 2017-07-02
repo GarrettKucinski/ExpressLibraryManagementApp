@@ -1,18 +1,27 @@
 extends ./layout.pug
 block content
     h1= title  
-    a.button(href="/new") Create New Item
+    a.button(href=`${content}/new`) Create New Item
     p Filters 
-        a(href="/all") All | 
-        a(href="/overdue") Overdue | 
-        a(href="/checked-out") Checked Out
+        a(href=`/${content}`) All | 
+        a(href=`/${content}?filter=overdue`) Overdue | 
+        a(href=`/${content}?filter=checked_out`) Checked Out
     table
         thead
             tr
                 for column in columns
                     th= column
+                if content === 'loans'
+                    th Action
         tbody
             for item in items 
                 tr
                     for column in columns
-                        td= item.dataValues[column]
+                        if column === "Title" || column === "Name" || column === "Book"
+                            td 
+                                a(href="/detail")= item.dataValues[column]
+                        else
+                            td= item.dataValues[column]
+                    if content === 'loans'
+                        td 
+                            a.button(href="books/return") Return Book

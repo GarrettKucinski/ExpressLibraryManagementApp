@@ -1,0 +1,18 @@
+h1= title
+form
+    p 
+        label(for="book_id") Book
+        select(id="book_id")
+            option(value="1") Harry Potter and the Philosopher's Stone
+    p
+        label(for="patron_id") Patron
+        select(id="patron_id")
+            option(value="1") Andrew Chalkley
+    p
+        label(for="loaned_on") Loaned on
+        input(id="loaned_on", type="text", value="Sun May 22 2016 17:00:00 GMT-0700 (PDT)")
+    p
+        label(for="return_by") Return by
+        input(id="return_by", type="text", value="Sun May 29 2016 17:00:00 GMT-0700 (PDT)")
+    p
+        input(type="submit", value="Create New Loan")
