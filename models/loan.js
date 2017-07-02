@@ -11,6 +11,8 @@ module.exports = function(sequelize, DataTypes) {
         return_by: DataTypes.DATE,
         returned_on: DataTypes.DATE
     }, {
+        timestamps: false
+    }, {
         classMethods: {
             associate: function(models) {
                 // associations can be defined here

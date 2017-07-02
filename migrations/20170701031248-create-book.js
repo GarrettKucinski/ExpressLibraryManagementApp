@@ -11,19 +11,14 @@ module.exports = {
             title: {
                 type: Sequelize.STRING
             },
+            author: {
+                type: Sequelize.STRING
+            },
             genre: {
                 type: Sequelize.STRING
             },
             first_published: {
                 type: Sequelize.INTEGER
-            },
-            createdAt: {
-                allowNull: false,
-                type: Sequelize.DATE
-            },
-            updatedAt: {
-                allowNull: false,
-                type: Sequelize.DATE
             }
         });
     },

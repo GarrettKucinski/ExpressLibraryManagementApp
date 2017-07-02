@@ -1,0 +1,18 @@
+extends ./layout.pug
+block content
+    h1= title  
+    a.button(href="/new") Create New Item
+    p Filters 
+        a(href="/all") All | 
+        a(href="/overdue") Overdue | 
+        a(href="/checked-out") Checked Out
+    table
+        thead
+            tr
+            for column in columns
+                th= column
+        tbody
+            for item in items 
+                tr
+                for column in columns
+                    td= item[column]

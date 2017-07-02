@@ -1,15 +1,8 @@
 doctype
 html
     head
-        title Books
+        title Library Manager 
         link(rel="stylesheet", href="/static/stylesheets/style.css")
         body
             include ./includes/_nav.pug
-            h1 View Title 
-            p
-                a.button(href="/new") Create New Item 
-            p Filters 
-                a(href="/all") All | 
-                a(href="/overdue") Overdue | 
-                a(href="/checked-out") Checked Out
             block content

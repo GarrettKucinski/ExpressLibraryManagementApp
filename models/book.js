@@ -7,7 +7,10 @@ module.exports = function(sequelize, DataTypes) {
         },
         title: DataTypes.STRING,
         genre: DataTypes.STRING,
+        author: DataTypes.STRING,
         first_published: DataTypes.INTEGER
+    }, {
+        timestamps: false
     }, {
         classMethods: {
             associate: function(models) {
