@@ -1,0 +1,12 @@
+for loan in loans
+    tr
+        td 
+            a(href="/detail")= loan.dataValues.Book.dataValues.title
+        td
+            a(href="/detail")= loan.dataValues.Patron.dataValues.Name
+        td= loan.dataValues.loaned_on
+        td= loan.dataValues.return_by
+        td= loan.dataValues.returned_on
+        if loan.dataValues.returned_on === null
+            td 
+                a.button(href="books/return") Return Book

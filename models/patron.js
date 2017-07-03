@@ -8,14 +8,13 @@ module.exports = function(sequelize, DataTypes) {
         library_id: DataTypes.STRING,
         zip_code: DataTypes.INTEGER
     }, {
-        timestamps: false
-    }, {
         classMethods: {
-            associate: function(models) {
+            associate(models) {
                 // associations can be defined here
                 // Patron.hasMany(models.Loan, { foreignKey: 'patron_id' });
             }
-        }
+        },
+        timestamps: false
     });
     return Patron;
 };

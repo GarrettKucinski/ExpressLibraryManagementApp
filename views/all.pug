@@ -4,16 +4,5 @@ block content
     table
         include ./includes/_table_headers.pug
         tbody
-            for loan in loans
-                tr
-                    td 
-                        a(href="/detail")= loan.dataValues.Book.dataValues.title
-                    td
-                        a(href="/detail")= loan.dataValues.Patron.dataValues.Name
-                    td= loan.dataValues.loaned_on
-                    td= loan.dataValues.return_by
-                    td= loan.dataValues.returned_on
-                    td 
-                        a.button(href="books/return") Return Book
-                    //- a(href="/detail")= items.dataValues[column]
-                    if content === 'loans'
+            if content === "loans"
+                include ./includes/_loan_table.pug
