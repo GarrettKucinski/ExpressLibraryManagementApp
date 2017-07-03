@@ -29,15 +29,24 @@ router.get('/', (req, res, next) => {
             where: [{
                 loaned_on: {
                     $not: null
-                }
+                },
+                returned_on: null
             }],
             include: [{
                 model: Book,
             }, {
                 model: Patron,
+                attributes: [
+                    [Patron.sequelize.literal('first_name || " " || last_name'), 'Name'],
+                    ['address', 'Address'],
+                    ['email', 'Email'],
+                    ['library_id', 'Library ID'],
+                    ['zip_code', 'Zip']
+                ]
             }]
         }).then(loans => {
             console.log(loans);
+            console.log(loans[0].Patron);
             res.render('all', { loans, columns, title, content });
         });
     });

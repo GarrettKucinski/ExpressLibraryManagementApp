@@ -1,11 +1,6 @@
 extends ./layout.pug
 block content
-    h1= title  
-    a.button(href=`${content}/new`) Create New Item
-    p Filters 
-        a(href=`/${content}`) All | 
-        a(href=`/${content}?filter=overdue`) Overdue | 
-        a(href=`/${content}?filter=checked_out`) Checked Out
+    include ./includes/_filters.pug
     table
         include ./includes/_table_headers.pug
         tbody
@@ -13,7 +8,12 @@ block content
                 tr
                     td 
                         a(href="/detail")= loan.dataValues.Book.dataValues.title
+                    td
+                        a(href="/detail")= loan.dataValues.Patron.dataValues.Name
+                    td= loan.dataValues.loaned_on
+                    td= loan.dataValues.return_by
+                    td= loan.dataValues.returned_on
+                    td 
+                        a.button(href="books/return") Return Book
                     //- a(href="/detail")= items.dataValues[column]
                     if content === 'loans'
-                        td 
-                            a.button(href="books/return") Return Book
