@@ -2,12 +2,18 @@
 
 const express = require('express');
 const router = express.Router();
+const Book = require('../models').Book;
 const Loan = require('../models').Loan;
+const Patron = require('../models').Patron;
 
-const title = "Loans";
+let title = "Loans";
 const content = 'loans';
 
 router.get('/', (req, res, next) => {
+    Book.hasMany(Loan, { foreignKey: 'book_id' });
+    Loan.belongsTo(Book, { foreignKey: 'book_id' });
+    Loan.belongsTo(Patron, { foreignKey: 'patron_id' });
+    Patron.hasMany(Loan, { foreignKey: 'patron_id' });
     Loan.findAll({
         attributes: [
             ['book_id', 'Book'],
@@ -19,7 +25,21 @@ router.get('/', (req, res, next) => {
     }).then((loans) => {
         const loan = loans[0].dataValues;
         const columns = Object.keys(loan);
-        res.render('all', { items: loans, columns, title, content });
+        Loan.findAll({
+            where: [{
+                loaned_on: {
+                    $not: null
+                }
+            }],
+            include: [{
+                model: Book,
+            }, {
+                model: Patron,
+            }]
+        }).then(loans => {
+            console.log(loans);
+            res.render('all', { loans, columns, title, content });
+        });
     });
 });
 

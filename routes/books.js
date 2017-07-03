@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const Book = require('../models').Book;
 
-const title = "Books";
+let title = "Books";
 const content = 'books';
 
 router.get('/', (req, res, next) => {
@@ -20,6 +20,10 @@ router.get('/', (req, res, next) => {
         const columns = Object.keys(book);
         res.render('all', { items: books, columns, title, content });
     });
+});
+
+router.get('/:title', (req, res, next) => {
+    next();
 });
 
 router.get('/new', (req, res, next) => {

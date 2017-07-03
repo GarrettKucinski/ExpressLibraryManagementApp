@@ -7,21 +7,13 @@ block content
         a(href=`/${content}?filter=overdue`) Overdue | 
         a(href=`/${content}?filter=checked_out`) Checked Out
     table
-        thead
-            tr
-                for column in columns
-                    th= column
-                if content === 'loans'
-                    th Action
+        include ./includes/_table_headers.pug
         tbody
-            for item in items 
+            for loan in loans
                 tr
-                    for column in columns
-                        if column === "Title" || column === "Name" || column === "Book"
-                            td 
-                                a(href="/detail")= item.dataValues[column]
-                        else
-                            td= item.dataValues[column]
+                    td 
+                        a(href="/detail")= loan.dataValues.Book.dataValues.title
+                    //- a(href="/detail")= items.dataValues[column]
                     if content === 'loans'
                         td 
                             a.button(href="books/return") Return Book

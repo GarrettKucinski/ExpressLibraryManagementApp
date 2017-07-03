@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const Patron = require('../models').Patron;
 
-const title = 'Patrons';
+let title = 'Patrons';
 const content = 'patrons';
 
 router.get('/', (req, res, next) => {

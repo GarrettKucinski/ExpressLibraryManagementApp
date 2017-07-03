@@ -1,9 +1,15 @@
 extends ./layout.pug
 block content
+    h1= title 
     if content === 'books'
         include ./includes/_book_form.pug
     else if content === 'patrons'
         include ./includes/_patron_form.pug
     else
         include ./includes/_loan_form.pug
-
+    h2 Loan History
+    table
+        include ./includes/_table_headers.pug
+        tbody
+            tr
+                td New Column
