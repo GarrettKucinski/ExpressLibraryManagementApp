@@ -37,8 +37,7 @@ router.get('/new', (req, res, next) => {
 });
 
 router.get('/:title', (req, res, next) => {
-    const title = req.params.title;
-    console.log(title);
+    const title = req.params.title.replace(/_/g, ' ');
     const detail = true;
     const columns = [
         "Book",

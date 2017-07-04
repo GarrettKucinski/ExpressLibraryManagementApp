@@ -22,6 +22,7 @@ router.get('/', (req, res, next) => {
         const columns = Object.keys(book);
         const bookData = books.map(book => {
             return Object.assign({}, {
+                id: book.dataValues.id,
                 title: book.dataValues.Title,
                 author: book.dataValues.Author,
                 genre: book.dataValues.Genre,
@@ -31,27 +32,34 @@ router.get('/', (req, res, next) => {
         res.render('all', { bookData, columns, title, content });
     });
 });
+
 router.get('/:title', (req, res, next) => {
+    const bookData = Book.findAll({
+        where: {
+            title: req.params.title.replace(/_/g, ' ')
+        },
+    });
+
     const loanData = Loan.findAll({
+        where: {
+            loaned_on: {
+                $not: null
+            }
+        },
         include: [{
-            model: Book,
-            where: {
-                title: req.params.title.replace(/_/g, ' ')
-            },
-        }, {
             model: Patron,
             attributes: [
                 [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName'],
             ]
-        }],
-        where: {
-            loaned_on: {
-                $not: null
-            },
-        }
-    }).then(data => {
-        console.log(data[0].Book);
+        }]
+    });
+
+    Promise.all([
+        bookData,
+        loanData
+    ]).then(data => {
         const detail = true;
+
         const columns = [
             "Book",
             "Patron",
@@ -59,26 +67,27 @@ router.get('/:title', (req, res, next) => {
             "Return By",
             "Returned On"
         ];
+
         const book = Object.assign({}, {
-            title: data[0].Book.dataValues.title,
-            genre: data[0].Book.dataValues.genre,
-            author: data[0].Book.dataValues.author,
-            firstPublished: data[0].Book.dataValues.first_published,
-            loans: data.map(loan => {
-                return Object.assign({}, {
-                    bookName: data[0].Book.dataValues.title,
-                    patronName: data[0].Patron.dataValues.fullName,
-                    loanedOn: loan.dataValues.loaned_on,
-                    returnBy: loan.dataValues.return_by,
-                    returnedOn: loan.dataValues.returned_on
-                });
-            })
+            title: data[0][0].dataValues.title,
+            genre: data[0][0].dataValues.genre,
+            author: data[0][0].dataValues.author,
+            firstPublished: data[0][0].dataValues.first_published,
         });
 
-        title = `Book: ${req.params.title.replace(/_/g, ' ')}`;
-        console.log(data[1]);
-        const loanedBooks = {};
-        res.render('detail', { content, detail, title, book, columns, loanedBooks: book.loans });
+        const loanedBooks = data[1].map(loan => {
+            return Object.assign({}, {
+                bookName: data[0][0].dataValues.title,
+                patronName: loan.Patron.dataValues.fullName,
+                loanedOn: loan.dataValues.loaned_on,
+                returnBy: loan.dataValues.return_by,
+                returnedOn: loan.dataValues.returned_on
+            });
+        });
+
+        title = `Book: ${book.title}`;
+
+        res.render('detail', { content, detail, title, book, columns, loanedBooks });
     });
 });
 
