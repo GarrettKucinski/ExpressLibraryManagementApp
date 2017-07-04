@@ -1,9 +1,9 @@
 for loanedBook in loanedBooks
     tr
         td 
-            a(href=`books/detail`)= loanedBook.bookName
+            a(href=`books/${loanedBook.bookName.replace(/ /g, '_')}`)= loanedBook.bookName
         td
-            a(href=`patrons/detail`)= loanedBook.patronName
+            a(href=`patrons/${loanedBook.patronName}`)= loanedBook.patronName
         td= loanedBook.loanedOn
         td= loanedBook.returnBy
         td= loanedBook.returnedOn

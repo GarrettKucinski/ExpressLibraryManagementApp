@@ -44,6 +44,7 @@ router.get('/', (req, res, next) => {
                 returnedOn: loan.dataValues.returned_on
             });
         });
+
         res.render('all', { loanedBooks, columns, title, content });
     });
 });

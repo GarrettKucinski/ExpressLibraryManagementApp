@@ -36,4 +36,19 @@ router.get('/new', (req, res, next) => {
     res.render('new', { content });
 });
 
+router.get('/:title', (req, res, next) => {
+    const title = req.params.title;
+    console.log(title);
+    const detail = true;
+    const columns = [
+        "Book",
+        "Patron",
+        "Loaned On",
+        "Return By",
+        "Return On"
+    ];
+    const loanedBooks = {};
+    res.render('detail', { detail, content, title, columns, loanedBooks });
+})
+
 module.exports = router;

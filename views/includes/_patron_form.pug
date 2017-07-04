@@ -19,4 +19,4 @@ form
         label(for="zip_code") Zip Code 
         input(id="zip_code" type="text")
     p
-        input(type="submit" value="Create New Patron")
+        input(type="submit" value=`${ detail ? 'Update' : 'Create New Patron'}`)
