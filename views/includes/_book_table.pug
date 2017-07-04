@@ -1,0 +1,7 @@
+for book in bookData
+    tr
+        td 
+            a(href=`${content}/detail`)= book.title
+        td= book.author
+        td= book.genre
+        td= book.firstPublished

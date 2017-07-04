@@ -1,0 +1,8 @@
+for patron in patronData
+    tr
+        td 
+            a(href=`${content}/detail`)= patron.fullName
+        td= patron.address
+        td= patron.email
+        td= patron.libraryId
+        td= patron.zip

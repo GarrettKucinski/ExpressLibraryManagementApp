@@ -7,12 +7,11 @@ module.exports = function(sequelize, DataTypes) {
         first_published: DataTypes.INTEGER
     }, {
         classMethods: {
-            associate(models) {
+            associate: function(models) {
                 // associations can be defined here
                 Book.hasMany(models.Loan, { foreignKey: "book_id" });
             }
-        },
-        timestamps: false
+        }
     });
     return Book;
 };

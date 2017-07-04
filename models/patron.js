@@ -9,12 +9,11 @@ module.exports = function(sequelize, DataTypes) {
         zip_code: DataTypes.INTEGER
     }, {
         classMethods: {
-            associate(models) {
+            associate: function(models) {
                 // associations can be defined here
-                // Patron.hasMany(models.Loan, { foreignKey: 'patron_id' });
+                Patron.hasMany(models.Loan, { foreignKey: 'patron_id' });
             }
-        },
-        timestamps: false
+        }
     });
     return Patron;
 };

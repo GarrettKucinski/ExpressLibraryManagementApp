@@ -8,13 +8,12 @@ module.exports = function(sequelize, DataTypes) {
         returned_on: DataTypes.DATE
     }, {
         classMethods: {
-            associate(models) {
+            associate: function(models) {
                 // associations can be defined here
                 Loan.belongsTo(models.Book, { foreignKey: "book_id" });
                 Loan.belongsTo(models.Patron, { foreignKey: "patron_id" });
             }
-        },
-        timestamps: false
+        }
     });
     return Loan;
 };

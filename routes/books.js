@@ -18,7 +18,15 @@ router.get('/', (req, res, next) => {
     }).then((books) => {
         const book = books[0].dataValues;
         const columns = Object.keys(book);
-        res.render('all', { items: books, columns, title, content });
+        const bookData = books.map(book => {
+            return Object.assign({}, {
+                title: book.dataValues.Title,
+                author: book.dataValues.Author,
+                genre: book.dataValues.Genre,
+                firstPublished: book.dataValues['First Published']
+            });
+        });
+        res.render('all', { bookData, columns, title, content });
     });
 });
 

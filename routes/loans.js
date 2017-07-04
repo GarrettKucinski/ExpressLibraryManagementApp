@@ -10,10 +10,6 @@ let title = "Loans";
 const content = 'loans';
 
 router.get('/', (req, res, next) => {
-    // Book.hasMany(Loan, { foreignKey: 'book_id' });
-    // Loan.belongsTo(Book, { foreignKey: 'book_id' });
-    // Loan.belongsTo(Patron, { foreignKey: 'patron_id' });
-    // Patron.hasMany(Loan, { foreignKey: 'patron_id' });
     Loan.findAll({
         where: [{
             loaned_on: {
@@ -22,14 +18,13 @@ router.get('/', (req, res, next) => {
         }],
         include: [{
             model: Book,
+            attributes: [
+                ['title', 'Title']
+            ]
         }, {
             model: Patron,
             attributes: [
                 [Patron.sequelize.literal('first_name || " " || last_name'), 'Name'],
-                ['address', 'Address'],
-                ['email', 'Email'],
-                ['library_id', 'Library ID'],
-                ['zip_code', 'Zip']
             ]
         }]
     }).then(loans => {
@@ -40,7 +35,16 @@ router.get('/', (req, res, next) => {
             "Return By",
             "Return On"
         ];
-        res.render('all', { loans, columns, title, content });
+        const loanedBooks = loans.map(loan => {
+            return Object.assign({}, {
+                bookName: loan.dataValues.Book.dataValues.Title,
+                patronName: loan.dataValues.Patron.dataValues.Name,
+                loanedOn: loan.dataValues.loaned_on,
+                returnBy: loan.dataValues.return_by,
+                returnedOn: loan.dataValues.returned_on
+            });
+        });
+        res.render('all', { loanedBooks, columns, title, content });
     });
 });
 

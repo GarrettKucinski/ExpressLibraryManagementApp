@@ -19,7 +19,16 @@ router.get('/', (req, res, next) => {
     }).then((patrons) => {
         const patron = patrons[0].dataValues;
         const columns = Object.keys(patron);
-        res.render('all', { items: patrons, columns, title, content });
+        const patronData = patrons.map(patron => {
+            return Object.assign({}, {
+                fullName: patron.dataValues.Name,
+                address: patron.dataValues.Address,
+                email: patron.dataValues.Email,
+                libraryId: patron.dataValues['Library ID'],
+                zip: patron.dataValues.Zip
+            });
+        })
+        res.render('all', { patronData, columns, title, content });
     });
 });
 
