@@ -16,7 +16,7 @@ router.get('/', (req, res, next) => {
             ['library_id', 'Library ID'],
             ['zip_code', 'Zip']
         ]
-    }).then((patrons) => {
+    }).then(patrons => {
         const patron = patrons[0].dataValues;
         const columns = Object.keys(patron);
         const patronData = patrons.map(patron => {
@@ -36,18 +36,39 @@ router.get('/new', (req, res, next) => {
     res.render('new', { content });
 });
 
-router.get('/:title', (req, res, next) => {
-    const title = `Patron: ${req.params.title.replace(/_/g, ' ')}`;
-    const detail = true;
-    const columns = [
-        "Book",
-        "Patron",
-        "Loaned On",
-        "Return By",
-        "Return On"
-    ];
-    const loanedBooks = {};
-    res.render('detail', { detail, content, title, columns, loanedBooks });
-})
+router.get('/:name', (req, res, next) => {
+    const firstName = req.params.name.split('_')[0];
+    const lastName = req.params.name.split('_')[1];
+    Patron.findAll({
+        where: [{
+            first_name: firstName,
+            last_name: lastName
+        }]
+    }).then(patron => {
+        const title = `Patron: ${ req.params.name.replace(/_/g, ' ') }`;
+        const detail = true;
+        const columns = [
+            "Book",
+            "Patron",
+            "Loaned On",
+            "Return By",
+            "Return On"
+        ];
+        const loanedBooks = {};
+        console.log(patron);
+        const patronDetails = Object.assign({}, {
+            firstName: patron[0].dataValues.first_name,
+            lastName: patron[0].dataValues.last_name,
+            address: patron[0].dataValues.address,
+            email: patron[0].dataValues.email,
+            libraryId: patron[0].dataValues.library_id,
+            zip: patron[0].dataValues.zip_code
+        });
+        res.render('detail', { detail, patronDetails, content, title, columns, loanedBooks });
+
+    }).catch(err => {
+        console.log(err);
+    });
+});
 
 module.exports = router;
