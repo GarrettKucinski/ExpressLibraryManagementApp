@@ -12,18 +12,25 @@ const content = 'patrons';
 router.get('/', (req, res, next) => {
     Patron.findAll({
         attributes: [
-            [Patron.sequelize.literal('first_name || " " || last_name'), 'Name'],
+            ['id', 'id'],
+            [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName'],
             ['address', 'Address'],
             ['email', 'Email'],
             ['library_id', 'Library ID'],
             ['zip_code', 'Zip']
         ]
     }).then(patrons => {
-        const patron = patrons[0].dataValues;
-        const columns = Object.keys(patron);
+        const columns = [
+            "Name",
+            "Address",
+            "Email",
+            "Library ID",
+            "Zip"
+        ];
         const patronData = patrons.map(patron => {
             return Object.assign({}, {
-                fullName: patron.dataValues.Name,
+                id: patron.dataValues.id,
+                fullName: patron.dataValues.fullName,
                 address: patron.dataValues.Address,
                 email: patron.dataValues.Email,
                 libraryId: patron.dataValues['Library ID'],
@@ -38,20 +45,16 @@ router.get('/new', (req, res, next) => {
     res.render('new', { content });
 });
 
-router.get('/:name', (req, res, next) => {
-    const firstName = req.params.name.split('_')[0];
-    const lastName = req.params.name.split('_')[1];
+router.get('/:id', (req, res, next) => {
     Patron.findAll({
         where: [{
-            first_name: firstName,
-            last_name: lastName
+            id: req.params.id
         }],
         include: [{
             model: Loan,
             include: Book
         }]
     }).then(patron => {
-        const title = `Patron: ${ req.params.name.replace(/_/g, ' ') }`;
         const detail = true;
         const columns = [
             "Book",
@@ -71,13 +74,15 @@ router.get('/:name', (req, res, next) => {
             loans: patron[0].Loans.map(loan => {
                 return Object.assign({}, {
                     bookName: loan.Book.dataValues.title,
-                    patronName: req.params.name.replace(/_/g, ' '),
+                    patronName: `${ patron[0].dataValues.first_name } ${ patron[0].dataValues.last_name }`,
                     loanedOn: loan.dataValues.loaned_on,
                     returnBy: loan.dataValues.return_by,
                     returnedOn: loan.dataValues.returned_on
                 });
             })
         });
+
+        const title = `Patron: ${ patronDetails.firstName } ${ patronDetails.lastName}`;
 
         res.render('detail', { detail, patronDetails, content, title, columns, loanedBooks: patronDetails.loans });
 

@@ -13,14 +13,20 @@ const content = 'books';
 router.get('/', (req, res, next) => {
     Book.findAll({
         attributes: [
+            ['id', 'id'],
             ['title', 'Title'],
             ['author', 'Author'],
             ['genre', 'Genre'],
             ['first_published', 'First Published']
         ]
     }).then(books => {
-        const book = books[0].dataValues;
-        const columns = Object.keys(book);
+        console.log(books);
+        const columns = [
+            "Title",
+            "Author",
+            "Genre",
+            "First Published"
+        ];
         const bookData = books.map(book => {
             return Object.assign({}, {
                 id: book.dataValues.id,
@@ -45,10 +51,10 @@ router.get('/return', (req, res, next) => {
     res.render('return_book');
 });
 
-router.get('/:title', (req, res, next) => {
+router.get('/:id', (req, res, next) => {
     const bookData = Book.findAll({
         where: {
-            title: req.params.title.replace(/_/g, ' ')
+            id: req.params.id
         },
     });
 
@@ -58,7 +64,6 @@ router.get('/:title', (req, res, next) => {
                 $not: null
             }
         },
-
         include: [{
             model: Patron,
             attributes: [
@@ -67,7 +72,7 @@ router.get('/:title', (req, res, next) => {
         }, {
             model: Book,
             where: {
-                title: req.params.title.replace(/_/g, ' ')
+                id: req.params.id
             }
         }]
     });
@@ -77,7 +82,7 @@ router.get('/:title', (req, res, next) => {
         loanData
     ]).then(data => {
         detail = true;
-
+        console.log(data[1]);
         const columns = [
             "Book",
             "Patron",
@@ -87,6 +92,7 @@ router.get('/:title', (req, res, next) => {
         ];
 
         const book = Object.assign({}, {
+            id: data[0][0].dataValues.id,
             title: data[0][0].dataValues.title,
             genre: data[0][0].dataValues.genre,
             author: data[0][0].dataValues.author,
@@ -103,7 +109,7 @@ router.get('/:title', (req, res, next) => {
             });
         });
 
-        title = `Book: ${req.params.title.replace(/_/g, ' ')}`;
+        title = `Book: ${ book.title }`;
 
         res.render('detail', { content, detail, title, book, columns, loanedBooks });
     }).catch(err => {

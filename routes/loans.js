@@ -19,11 +19,13 @@ router.get('/', (req, res, next) => {
         include: [{
             model: Book,
             attributes: [
+                ['id', 'id'],
                 ['title', 'Title']
             ]
         }, {
             model: Patron,
             attributes: [
+                ['id', 'id'],
                 [Patron.sequelize.literal('first_name || " " || last_name'), 'Name'],
             ]
         }]
@@ -37,6 +39,8 @@ router.get('/', (req, res, next) => {
         ];
         const loanedBooks = loans.map(loan => {
             return Object.assign({}, {
+                bookId: loan.dataValues.Book.dataValues.id,
+                patronId: loan.dataValues.Patron.dataValues.id,
                 bookName: loan.dataValues.Book.dataValues.Title,
                 patronName: loan.dataValues.Patron.dataValues.Name,
                 loanedOn: loan.dataValues.loaned_on,
