@@ -60,7 +60,7 @@ router.get('/:name', (req, res, next) => {
             "Return By",
             "Return On"
         ];
-        const loanedBooks = {};
+
         const patronDetails = Object.assign({}, {
             firstName: patron[0].dataValues.first_name,
             lastName: patron[0].dataValues.last_name,
@@ -78,6 +78,7 @@ router.get('/:name', (req, res, next) => {
                 });
             })
         });
+
         res.render('detail', { detail, patronDetails, content, title, columns, loanedBooks: patronDetails.loans });
 
     }).catch(err => {
