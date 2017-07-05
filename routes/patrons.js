@@ -3,6 +3,8 @@
 const express = require('express');
 const router = express.Router();
 const Patron = require('../models').Patron;
+const Loan = require('../models').Loan;
+const Book = require('../models').Book;
 
 let title = 'Patrons';
 const content = 'patrons';
@@ -43,6 +45,10 @@ router.get('/:name', (req, res, next) => {
         where: [{
             first_name: firstName,
             last_name: lastName
+        }],
+        include: [{
+            model: Loan,
+            include: Book
         }]
     }).then(patron => {
         const title = `Patron: ${ req.params.name.replace(/_/g, ' ') }`;
@@ -55,16 +61,24 @@ router.get('/:name', (req, res, next) => {
             "Return On"
         ];
         const loanedBooks = {};
-        console.log(patron);
         const patronDetails = Object.assign({}, {
             firstName: patron[0].dataValues.first_name,
             lastName: patron[0].dataValues.last_name,
             address: patron[0].dataValues.address,
             email: patron[0].dataValues.email,
             libraryId: patron[0].dataValues.library_id,
-            zip: patron[0].dataValues.zip_code
+            zip: patron[0].dataValues.zip_code,
+            loans: patron[0].Loans.map(loan => {
+                return Object.assign({}, {
+                    bookName: loan.Book.dataValues.title,
+                    patronName: req.params.name.replace(/_/g, ' '),
+                    loanedOn: loan.dataValues.loaned_on,
+                    returnBy: loan.dataValues.return_by,
+                    returnedOn: loan.dataValues.returned_on
+                });
+            })
         });
-        res.render('detail', { detail, patronDetails, content, title, columns, loanedBooks });
+        res.render('detail', { detail, patronDetails, content, title, columns, loanedBooks: patronDetails.loans });
 
     }).catch(err => {
         console.log(err);
