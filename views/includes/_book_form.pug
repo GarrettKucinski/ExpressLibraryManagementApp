@@ -2,15 +2,15 @@ h1= title
 form
     p
         label(for="title") Title
-        input(id="title", type="text" value=`${book.title}`)
+        input(id="title", type="text" value=`${ detail ? book.title : '' }`)
     p
         label(for="author") Author
-        input(id="author", type="text" value=`${book.author}`)
+        input(id="author", type="text" value=`${ detail ? book.author : '' }`)
     p
         label(for="genre") Genre
-        input(id="genre", type="text" value=`${book.genre}`)
+        input(id="genre", type="text" value=`${ detail ? book.genre : '' }`)
     p
         label(for="first_published") First Published
-        input(id="first_published", type="text" value=`${book.firstPublished}`)
+        input(id="first_published", type="text" value=`${ detail ? book.firstPublished : '' }`)
     p
         input(type="submit" value=`${ detail ? 'Update' : 'Create New Book'}`)

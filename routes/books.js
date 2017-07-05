@@ -6,6 +6,7 @@ const Book = require('../models').Book;
 const Loan = require('../models').Loan;
 const Patron = require('../models').Patron;
 
+let detail;
 let title = "Books";
 const content = 'books';
 
@@ -17,7 +18,7 @@ router.get('/', (req, res, next) => {
             ['genre', 'Genre'],
             ['first_published', 'First Published']
         ]
-    }).then((books) => {
+    }).then(books => {
         const book = books[0].dataValues;
         const columns = Object.keys(book);
         const bookData = books.map(book => {
@@ -30,7 +31,18 @@ router.get('/', (req, res, next) => {
             });
         });
         res.render('all', { bookData, columns, title, content });
+    }).catch(err => {
+        console.log(err);
     });
+});
+
+router.get('/new', (req, res, next) => {
+    title = 'New Book';
+    res.render('new', { title, content });
+});
+
+router.get('/return', (req, res, next) => {
+    res.render('return_book');
 });
 
 router.get('/:title', (req, res, next) => {
@@ -46,11 +58,17 @@ router.get('/:title', (req, res, next) => {
                 $not: null
             }
         },
+
         include: [{
             model: Patron,
             attributes: [
                 [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName'],
             ]
+        }, {
+            model: Book,
+            where: {
+                title: req.params.title.replace(/_/g, ' ')
+            }
         }]
     });
 
@@ -58,7 +76,7 @@ router.get('/:title', (req, res, next) => {
         bookData,
         loanData
     ]).then(data => {
-        const detail = true;
+        detail = true;
 
         const columns = [
             "Book",
@@ -72,7 +90,7 @@ router.get('/:title', (req, res, next) => {
             title: data[0][0].dataValues.title,
             genre: data[0][0].dataValues.genre,
             author: data[0][0].dataValues.author,
-            firstPublished: data[0][0].dataValues.first_published,
+            firstPublished: data[0][0].dataValues.first_published
         });
 
         const loanedBooks = data[1].map(loan => {
@@ -85,18 +103,13 @@ router.get('/:title', (req, res, next) => {
             });
         });
 
-        title = `Book: ${book.title}`;
+        title = `Book: ${req.params.title.replace(/_/g, ' ')}`;
 
         res.render('detail', { content, detail, title, book, columns, loanedBooks });
+    }).catch(err => {
+        console.log(err);
     });
 });
 
-router.get('/new', (req, res, next) => {
-    res.render('new', { content });
-});
-
-router.get('/return', (req, res, next) => {
-    res.render('return_book');
-});
 
 module.exports = router;

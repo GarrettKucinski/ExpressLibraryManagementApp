@@ -37,7 +37,7 @@ router.get('/new', (req, res, next) => {
 });
 
 router.get('/:title', (req, res, next) => {
-    const title = req.params.title.replace(/_/g, ' ');
+    const title = `Patron: ${req.params.title.replace(/_/g, ' ')}`;
     const detail = true;
     const columns = [
         "Book",
