@@ -6,7 +6,6 @@ const Book = require('../models').Book;
 const Loan = require('../models').Loan;
 const Patron = require('../models').Patron;
 
-let title = "Loans";
 const content = 'loans';
 
 router.get('/', (req, res, next) => {
@@ -48,6 +47,8 @@ router.get('/', (req, res, next) => {
                 returnedOn: loan.dataValues.returned_on
             });
         });
+
+        const title = "Loans";
 
         res.render('all', { loanedBooks, columns, title, content });
     });

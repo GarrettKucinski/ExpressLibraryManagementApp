@@ -79,6 +79,7 @@ router.get('/:id/:name', (req, res, next) => {
         include: [{
             model: Patron,
             attributes: [
+                ['id', 'id'],
                 [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName'],
             ]
         }, {
@@ -115,6 +116,7 @@ router.get('/:id/:name', (req, res, next) => {
             return Object.assign({}, {
                 bookName: data[0][0].dataValues.title,
                 patronName: loan.Patron.dataValues.fullName,
+                patronId: loan.Patron.dataValues.id,
                 loanedOn: loan.dataValues.loaned_on,
                 returnBy: loan.dataValues.return_by,
                 returnedOn: loan.dataValues.returned_on

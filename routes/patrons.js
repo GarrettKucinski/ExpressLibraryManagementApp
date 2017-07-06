@@ -6,7 +6,6 @@ const Patron = require('../models').Patron;
 const Loan = require('../models').Loan;
 const Book = require('../models').Book;
 
-let title = 'Patrons';
 const content = 'patrons';
 
 router.get('/', (req, res, next) => {
@@ -36,7 +35,10 @@ router.get('/', (req, res, next) => {
                 libraryId: patron.dataValues['Library ID'],
                 zip: patron.dataValues.Zip
             });
-        })
+        });
+
+        const title = 'Patrons';
+
         res.render('all', { patronData, columns, title, content });
     });
 });
@@ -50,12 +52,23 @@ router.get('/:id', (req, res, next) => {
         where: [{
             id: req.params.id
         }],
+    }).then(patron => {
+        res.redirect(`/patrons/${req.params.id}/${patron[0].dataValues.first_name}_${patron[0].dataValues.last_name}`);
+    });
+});
+
+router.get('/:id/:name', (req, res, next) => {
+    Patron.findAll({
+        where: [{
+            id: req.params.id
+        }],
         include: [{
             model: Loan,
             include: Book
         }]
     }).then(patron => {
         const detail = true;
+
         const columns = [
             "Book",
             "Patron",
