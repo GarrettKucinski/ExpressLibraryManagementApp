@@ -87,7 +87,9 @@ router.get('/:id/:name', (req, res, next) => {
             loans: patron[0].Loans.map(loan => {
                 return Object.assign({}, {
                     bookName: loan.Book.dataValues.title,
+                    bookId: loan.Book.dataValues.id,
                     patronName: `${ patron[0].dataValues.first_name } ${ patron[0].dataValues.last_name }`,
+                    patronId: patron[0].dataValues.id,
                     loanedOn: loan.dataValues.loaned_on,
                     returnBy: loan.dataValues.return_by,
                     returnedOn: loan.dataValues.returned_on

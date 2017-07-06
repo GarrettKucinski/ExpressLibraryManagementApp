@@ -94,6 +94,7 @@ router.get('/:id/:name', (req, res, next) => {
         bookData,
         loanData
     ]).then(data => {
+
         detail = true;
 
         const columns = [
@@ -115,6 +116,7 @@ router.get('/:id/:name', (req, res, next) => {
         const loanedBooks = data[1].map(loan => {
             return Object.assign({}, {
                 bookName: data[0][0].dataValues.title,
+                bookId: data[0][0].dataValues.id,
                 patronName: loan.Patron.dataValues.fullName,
                 patronId: loan.Patron.dataValues.id,
                 loanedOn: loan.dataValues.loaned_on,
