@@ -7,7 +7,6 @@ const Loan = require('../models').Loan;
 const Patron = require('../models').Patron;
 
 let detail;
-let title = "Books";
 const content = 'books';
 
 router.get('/', (req, res, next) => {
@@ -20,7 +19,7 @@ router.get('/', (req, res, next) => {
             ['first_published', 'First Published']
         ]
     }).then(books => {
-        console.log(books);
+
         const columns = [
             "Title",
             "Author",
@@ -36,6 +35,9 @@ router.get('/', (req, res, next) => {
                 firstPublished: book.dataValues['First Published']
             });
         });
+
+        const title = "Books";
+
         res.render('all', { bookData, columns, title, content });
     }).catch(err => {
         console.log(err);
@@ -43,7 +45,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/new', (req, res, next) => {
-    title = 'New Book';
+    const title = 'New Book';
     res.render('new', { title, content });
 });
 
@@ -52,6 +54,16 @@ router.get('/return', (req, res, next) => {
 });
 
 router.get('/:id', (req, res, next) => {
+    Book.findAll({
+        where: {
+            id: req.params.id
+        },
+    }).then(book => {
+        res.redirect(`/books/${req.params.id}/${book[0].dataValues.title.replace(/ /g, '_')}`);
+    });
+});
+
+router.get('/:id/:name', (req, res, next) => {
     const bookData = Book.findAll({
         where: {
             id: req.params.id
@@ -82,7 +94,7 @@ router.get('/:id', (req, res, next) => {
         loanData
     ]).then(data => {
         detail = true;
-        console.log(data[1]);
+
         const columns = [
             "Book",
             "Patron",
@@ -109,13 +121,13 @@ router.get('/:id', (req, res, next) => {
             });
         });
 
-        title = `Book: ${ book.title }`;
+        const title = `Book: ${ book.title }`;
 
         res.render('detail', { content, detail, title, book, columns, loanedBooks });
+
     }).catch(err => {
         console.log(err);
     });
 });
-
 
 module.exports = router;

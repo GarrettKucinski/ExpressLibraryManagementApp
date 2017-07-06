@@ -1,7 +1,7 @@
 for book in bookData
     tr
         td 
-            a(href=`/${ content }/${ book.id }`)= book.title
+            a(href=`/${ content }/${ book.id }/${ book.title.replace(/ /g, '_') }`)= book.title
         td= book.author
         td= book.genre
         td= book.firstPublished
