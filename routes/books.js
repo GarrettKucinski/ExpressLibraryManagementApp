@@ -2,12 +2,15 @@
 
 const express = require('express');
 const router = express.Router();
+const moment = require('moment');
 const Book = require('../models').Book;
 const Loan = require('../models').Loan;
 const Patron = require('../models').Patron;
 
 let detail;
 const content = 'books';
+
+const today = moment().format('YYYY[-]MM[-]DD');
 
 router.get('/', (req, res, next) => {
 
@@ -45,7 +48,6 @@ router.get('/', (req, res, next) => {
         });
 
         if (req.query.filter === 'overdue') {
-            const today = new Date(Date.now()).toISOString().slice(0, 10);
             bookData = bookData.filter(book => {
                 if (book.loans.length > 0) {
                     for (let loan of book.loans) {
@@ -61,7 +63,7 @@ router.get('/', (req, res, next) => {
             bookData = bookData.filter(book => {
                 if (book.loans.length > 0) {
                     for (let loan of book.loans) {
-                        return loan.dataValues.returned_on !== null;
+                        return loan.dataValues.returned_on === null && loan.dataValues.loaned_on !== null;
                     }
                 }
             });

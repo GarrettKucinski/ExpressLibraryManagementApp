@@ -63,7 +63,7 @@ router.get('/', (req, res, next) => {
 
         if (req.query.filter === 'checked_out') {
             loanedBooks = loanedBooks.filter(loanedBook => {
-                return loanedBook.returnedOn !== null;
+                return loanedBook.returnedOn === null && loanedBook.loanedOn !== null;
             });
         }
 
@@ -74,18 +74,21 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/new', (req, res, next) => {
+
     const books = Book.findAll({
         attributes: [
             ['id', 'id'],
             ['title', 'title']
         ]
     });
+
     const patrons = Patron.findAll({
         attributes: [
             ['id', 'id'],
             [Patron.sequelize.literal('first_name || " " || last_name'), 'name'],
         ]
     });
+
     Promise.all([books, patrons]).then(data => {
         const books = data[0].map(book => {
             return Object.assign({}, {
@@ -103,6 +106,7 @@ router.get('/new', (req, res, next) => {
 
         const loanedOn = today;
         const returnBy = aWeekFromNow;
+
         res.render('new', { content, books, patrons, loanedOn, returnBy });
     });
 });
