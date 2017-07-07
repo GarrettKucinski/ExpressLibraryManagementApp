@@ -40,7 +40,6 @@ router.get('/', (req, res, next) => {
 
         const title = 'Patrons';
 
-        console.log(req);
         res.render('all', { patronData, columns, title, content });
     });
 });

@@ -45,7 +45,6 @@ router.get('/', (req, res, next) => {
         });
 
         if (req.query.filter === 'overdue') {
-            console.log('overdue');
             const today = new Date(Date.now()).toISOString().slice(0, 10);
             bookData = bookData.filter(book => {
                 if (book.loans.length > 0) {
@@ -53,6 +52,16 @@ router.get('/', (req, res, next) => {
                         if (loan.dataValues.returned_on === null && loan.dataValues.return_by < today) {
                             return book;
                         }
+                    }
+                }
+            });
+        }
+
+        if (req.query.filter === 'checked_out') {
+            bookData = bookData.filter(book => {
+                if (book.loans.length > 0) {
+                    for (let loan of book.loans) {
+                        return loan.dataValues.returned_on !== null;
                     }
                 }
             });
