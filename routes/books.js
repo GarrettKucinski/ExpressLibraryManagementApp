@@ -179,4 +179,19 @@ router.get('/:id/:name', (req, res, next) => {
     });
 });
 
+router.post('/:id/:name', (req, res, next) => {
+    Book.update({
+        title: req.body.title,
+        author: req.body.author,
+        genre: req.body.genre,
+        first_published: req.body.first_published
+    }, {
+        where: {
+            id: req.params.id
+        }
+    }).then(() => {
+        res.redirect('/books');
+    });
+});
+
 module.exports = router;

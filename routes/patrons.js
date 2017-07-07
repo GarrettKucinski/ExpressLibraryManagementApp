@@ -92,6 +92,7 @@ router.get('/:id/:name', (req, res, next) => {
         ];
 
         const patronDetails = Object.assign({}, {
+            id: patron[0].dataValues.id,
             firstName: patron[0].dataValues.first_name,
             lastName: patron[0].dataValues.last_name,
             address: patron[0].dataValues.address,
@@ -117,6 +118,23 @@ router.get('/:id/:name', (req, res, next) => {
 
     }).catch(err => {
         console.log(err);
+    });
+});
+
+router.post('/:id/:name', (req, res, next) => {
+    Patron.update({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        address: req.body.address,
+        email: req.body.email,
+        libary_id: req.body.libary_id,
+        zip_code: req.body.zip_code
+    }, {
+        where: {
+            id: req.params.id
+        }
+    }).then(() => {
+        res.redirect('/patrons');
     });
 });
 

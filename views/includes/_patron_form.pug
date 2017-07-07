@@ -1,5 +1,5 @@
 h1= title     
-form(action=`${ detail ? 'update' : `/${content}/new`}`, method="post")
+form(action=`${ detail ? `/${ content }/${patronDetails.id}/${ patronDetails.firstName }_${ patronDetails.lastName }` : `/${ content }/new`}`, method="post")
     p
         label(for="first_name") First Name 
         input(id="first_name", name="first_name", type="text", value=`${ detail ? patronDetails.firstName : '' }`)

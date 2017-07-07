@@ -1,5 +1,5 @@
 h1= title
-form(action=`${ detail ? '/:id/:name' : `/${content}/new` }`, method="post")
+form(action=`${ detail ? `/${ content }/${ book.id }/${ book.title.replace(/ /g, '_') }` : `/${content}/new` }`, method="post")
     p
         label(for="title") Title
         input(id="title", name="title", type="text", value=`${ detail ? book.title : '' }`)
