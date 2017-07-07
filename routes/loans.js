@@ -36,7 +36,7 @@ router.get('/', (req, res, next) => {
             "Return By",
             "Return On"
         ];
-        const loanedBooks = loans.map(loan => {
+        let loanedBooks = loans.map(loan => {
             return Object.assign({}, {
                 bookId: loan.dataValues.Book.dataValues.id,
                 patronId: loan.dataValues.Patron.dataValues.id,
@@ -47,6 +47,22 @@ router.get('/', (req, res, next) => {
                 returnedOn: loan.dataValues.returned_on
             });
         });
+
+        if (req.query.filter === 'overdue') {
+            console.log('overdue');
+            const today = new Date(Date.now()).toISOString().slice(0, 10);
+            loanedBooks = loanedBooks.filter(loanedBook => {
+                if (loanedBook.returnedOn === null && loanedBook.returnBy < today) {
+                    return loanedBook;
+                }
+            });
+        }
+
+        if (req.query.filter === 'checked_out') {
+            loanedBooks = loanedBooks.filter(loanedBook => {
+                return loanedBook.returnedOn !== null;
+            });
+        }
 
         const title = "Loans";
 

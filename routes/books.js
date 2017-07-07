@@ -10,15 +10,19 @@ let detail;
 const content = 'books';
 
 router.get('/', (req, res, next) => {
-    Book.findAll({
+
+    let query = Book.findAll({
         attributes: [
             ['id', 'id'],
             ['title', 'Title'],
             ['author', 'Author'],
             ['genre', 'Genre'],
             ['first_published', 'First Published']
-        ]
-    }).then(books => {
+        ],
+        include: Loan
+    });
+
+    query.then(books => {
 
         const columns = [
             "Title",
@@ -26,19 +30,38 @@ router.get('/', (req, res, next) => {
             "Genre",
             "First Published"
         ];
-        const bookData = books.map(book => {
+
+        let bookData = books.map(book => {
             return Object.assign({}, {
                 id: book.dataValues.id,
                 title: book.dataValues.Title,
                 author: book.dataValues.Author,
                 genre: book.dataValues.Genre,
-                firstPublished: book.dataValues['First Published']
+                firstPublished: book.dataValues['First Published'],
+                loans: book.dataValues.Loans.map(loan => {
+                    return loan;
+                })
             });
         });
+
+        if (req.query.filter === 'overdue') {
+            console.log('overdue');
+            const today = new Date(Date.now()).toISOString().slice(0, 10);
+            bookData = bookData.filter(book => {
+                if (book.loans.length > 0) {
+                    for (let loan of book.loans) {
+                        if (loan.dataValues.returned_on === null && loan.dataValues.return_by < today) {
+                            return book;
+                        }
+                    }
+                }
+            });
+        }
 
         const title = "Books";
 
         res.render('all', { bookData, columns, title, content });
+
     }).catch(err => {
         console.log(err);
     });

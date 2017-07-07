@@ -9,6 +9,7 @@ const Book = require('../models').Book;
 const content = 'patrons';
 
 router.get('/', (req, res, next) => {
+
     Patron.findAll({
         attributes: [
             ['id', 'id'],
@@ -39,6 +40,7 @@ router.get('/', (req, res, next) => {
 
         const title = 'Patrons';
 
+        console.log(req);
         res.render('all', { patronData, columns, title, content });
     });
 });
