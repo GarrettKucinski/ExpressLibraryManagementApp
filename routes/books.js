@@ -94,8 +94,43 @@ router.post('/new', (req, res, next) => {
     });
 });
 
-router.get('/return', (req, res, next) => {
-    res.render('return_book');
+router.get('/:id/return', (req, res, next) => {
+    Loan.findOne({
+        where: {
+            id: req.params.id
+        },
+        include: [{
+            model: Book,
+            attributes: [
+                ['title', 'title']
+            ]
+        }, {
+            model: Patron,
+            attributes: [
+                [Patron.sequelize.literal('first_name || " " || last_name'), 'name'],
+            ]
+        }]
+    }).then(loan => {
+        const loanedBook = Object.assign({}, {
+            bookTitle: loan.Book.dataValues.title,
+            patronName: loan.Patron.dataValues.name,
+            loanedOn: loan.dataValues.loaned_on,
+            returnBy: loan.dataValues.return_by
+        });
+        res.render('return_book', { today, loanedBook });
+    });
+});
+
+router.post('/:id/return', (req, res, next) => {
+    Loan.update({
+        returned_on: req.body.returned_on
+    }, {
+        where: {
+            id: req.params.id
+        }
+    }).then(() => {
+        res.redirect('/loans');
+    });
 });
 
 router.get('/:id', (req, res, next) => {
@@ -108,7 +143,7 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-router.get('/:id/:name', (req, res, next) => {
+router.get('/:id/:title', (req, res, next) => {
     const bookData = Book.findAll({
         where: {
             id: req.params.id
@@ -160,6 +195,7 @@ router.get('/:id/:name', (req, res, next) => {
 
         const loanedBooks = data[1].map(loan => {
             return Object.assign({}, {
+                loanId: loan.id,
                 bookName: data[0][0].dataValues.title,
                 bookId: data[0][0].dataValues.id,
                 patronName: loan.Patron.dataValues.fullName,

@@ -46,6 +46,7 @@ router.get('/', (req, res, next) => {
                 patronId: loan.dataValues.Patron.dataValues.id,
                 bookName: loan.dataValues.Book.dataValues.Title,
                 patronName: loan.dataValues.Patron.dataValues.Name,
+                loanId: loan.dataValues.id,
                 loanedOn: loan.dataValues.loaned_on,
                 returnBy: loan.dataValues.return_by,
                 returnedOn: loan.dataValues.returned_on
