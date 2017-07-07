@@ -2,11 +2,15 @@
 
 const express = require('express');
 const router = express.Router();
+const moment = require('moment');
 const Book = require('../models').Book;
 const Loan = require('../models').Loan;
 const Patron = require('../models').Patron;
 
 const content = 'loans';
+
+const today = moment().format('YYYY[-]MM[-]DD');
+const aWeekFromNow = moment().add(7, 'days').format('YYYY[-]MM[-]DD');
 
 router.get('/', (req, res, next) => {
     Loan.findAll({
@@ -50,7 +54,6 @@ router.get('/', (req, res, next) => {
 
         if (req.query.filter === 'overdue') {
             console.log('overdue');
-            const today = new Date(Date.now()).toISOString().slice(0, 10);
             loanedBooks = loanedBooks.filter(loanedBook => {
                 if (loanedBook.returnedOn === null && loanedBook.returnBy < today) {
                     return loanedBook;
@@ -90,18 +93,30 @@ router.get('/new', (req, res, next) => {
                 title: book.dataValues.title
             });
         });
+
         const patrons = data[1].map(patron => {
             return Object.assign({}, {
                 id: patron.dataValues.id,
                 fullName: patron.dataValues.name
             });
         });
-        res.render('new', { content, books, patrons });
+
+        const loanedOn = today;
+        const returnBy = aWeekFromNow;
+        res.render('new', { content, books, patrons, loanedOn, returnBy });
     });
 });
 
 router.post('/new', (req, res, next) => {
-    res.redirect('/loans');
+    Loan.create({
+        book_id: req.body.bookId,
+        patron_id: req.body.patronId,
+        loaned_on: req.body.loanedOn,
+        return_by: req.body.returnBy,
+        return_on: null
+    }).then(() => {
+        res.redirect('/loans');
+    });
 });
 
 module.exports = router;

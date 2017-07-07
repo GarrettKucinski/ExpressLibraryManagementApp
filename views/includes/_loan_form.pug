@@ -2,19 +2,19 @@ h1= title
 form(action=`/${content}/new`, method="post")
     p 
         label(for="book_id") Book
-        select(id="book_id")
+        select(id="book_id", name="bookId")
             each book in books
                 option(value=`${ book.id }`)= book.title
     p
         label(for="patron_id") Patron
-        select(id="patron_id")
+        select(id="patron_id", name="patronId")
             each patron in patrons
                 option(value=`${ patron.id }`)= patron.fullName 
     p
         label(for="loaned_on") Loaned on
-        input(id="loaned_on", type="text", value="Sun May 22 2016 17:00:00 GMT-0700 (PDT)")
+        input(id="loaned_on", name="loanedOn", type="text", value=`${ loanedOn }`)
     p
         label(for="return_by") Return by
-        input(id="return_by", type="text", value="Sun May 29 2016 17:00:00 GMT-0700 (PDT)")
+        input(id="return_by", name="returnBy", type="text", value=`${ returnBy }`)
     p
         input(type="submit", value="Create New Loan")

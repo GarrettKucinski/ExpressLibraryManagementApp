@@ -4,18 +4,15 @@ module.exports = function(sequelize, DataTypes) {
         book_id: DataTypes.INTEGER,
         patron_id: DataTypes.INTEGER,
         loaned_on: {
-            type: DataTypes.DATE,
-            allowNull: true,
+            type: DataTypes.DATEONLY,
             defaultValue: null
         },
         return_by: {
-            type: DataTypes.DATE,
-            allowNull: true,
+            type: DataTypes.DATEONLY,
             defaultValue: null
         },
         returned_on: {
-            type: DataTypes.DATE,
-            allowNull: true,
+            type: DataTypes.DATEONLY,
             defaultValue: null
         }
     }, {
