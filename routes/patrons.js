@@ -48,6 +48,19 @@ router.get('/new', (req, res, next) => {
     res.render('new', { content });
 });
 
+router.post('/new', (req, res, next) => {
+    Patron.create({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        address: req.body.address,
+        email: req.body.email,
+        library_id: req.body.library_id,
+        zip_code: req.body.zip_code
+    }).then(() => {
+        res.redirect('/patrons');
+    });
+});
+
 router.get('/:id', (req, res, next) => {
     Patron.findAll({
         where: [{

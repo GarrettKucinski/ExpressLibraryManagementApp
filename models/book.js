@@ -4,7 +4,12 @@ module.exports = function(sequelize, DataTypes) {
         title: DataTypes.STRING,
         genre: DataTypes.STRING,
         author: DataTypes.STRING,
-        first_published: DataTypes.INTEGER
+        first_published: {
+            type: DataTypes.INTEGER,
+            validate: {
+                isInt: true
+            }
+        }
     }, {
         classMethods: {
             associate: function(models) {

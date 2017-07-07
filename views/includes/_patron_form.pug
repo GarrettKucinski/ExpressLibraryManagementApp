@@ -1,22 +1,22 @@
 h1= title     
-form
+form(action=`${ detail ? 'update' : `/${content}/new`}`, method="post")
     p
         label(for="first_name") First Name 
-        input(id="first_name" type="text" value=`${ detail ? patronDetails.firstName : '' }`)
+        input(id="first_name", name="first_name", type="text", value=`${ detail ? patronDetails.firstName : '' }`)
     p 
         label(for="last_name") Last Name 
-        input(id="last_name" type="text" value=`${ detail ? patronDetails.lastName : '' }`)
+        input(id="last_name", name="last_name", type="text", value=`${ detail ? patronDetails.lastName : '' }`)
     p
         label(for="address") Address 
-        input(id="address" type="text" value=`${ detail ? patronDetails.address : '' }`)
+        input(id="address", name="address", type="text", value=`${ detail ? patronDetails.address : '' }`)
     p
         label(for="email") Email 
-        input(id="email" type="text" value=`${ detail ? patronDetails.email : '' }`)
+        input(id="email", name="email", type="text", value=`${ detail ? patronDetails.email : '' }`)
     p 
         label(for="library_id") Library ID 
-        input(id="library_id" type="text" value=`${ detail ? patronDetails.libraryId : '' }`)
+        input(id="library_id", name="library_id", type="text", value=`${ detail ? patronDetails.libraryId : '' }`)
     p
         label(for="zip_code") Zip Code 
-        input(id="zip_code" type="text" value=`${ detail ? patronDetails.zip : '' }`)
+        input(id="zip_code", name="zip_code", type="text", value=`${ detail ? patronDetails.zip : '' }`)
     p
         input(type="submit" value=`${ detail ? 'Update' : 'Create New Patron'}`)

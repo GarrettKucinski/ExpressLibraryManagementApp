@@ -81,6 +81,17 @@ router.get('/new', (req, res, next) => {
     res.render('new', { title, content });
 });
 
+router.post('/new', (req, res, next) => {
+    Book.create({
+        title: req.body.title,
+        author: req.body.author,
+        first_published: req.body.first_published,
+        genre: req.body.genre
+    }).then(() => {
+        res.redirect('/books');
+    });
+});
+
 router.get('/return', (req, res, next) => {
     res.render('return_book');
 });

@@ -71,7 +71,37 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/new', (req, res, next) => {
-    res.render('new', { content });
+    const books = Book.findAll({
+        attributes: [
+            ['id', 'id'],
+            ['title', 'title']
+        ]
+    });
+    const patrons = Patron.findAll({
+        attributes: [
+            ['id', 'id'],
+            [Patron.sequelize.literal('first_name || " " || last_name'), 'name'],
+        ]
+    });
+    Promise.all([books, patrons]).then(data => {
+        const books = data[0].map(book => {
+            return Object.assign({}, {
+                id: book.dataValues.id,
+                title: book.dataValues.title
+            });
+        });
+        const patrons = data[1].map(patron => {
+            return Object.assign({}, {
+                id: patron.dataValues.id,
+                fullName: patron.dataValues.name
+            });
+        });
+        res.render('new', { content, books, patrons });
+    });
+});
+
+router.post('/new', (req, res, next) => {
+    res.redirect('/loans');
 });
 
 module.exports = router;
