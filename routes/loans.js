@@ -113,7 +113,7 @@ router.post('/new', (req, res, next) => {
         patron_id: req.body.patronId,
         loaned_on: req.body.loanedOn,
         return_by: req.body.returnBy,
-        return_on: null
+        returned_on: null
     }).then(() => {
         res.redirect('/loans');
     });

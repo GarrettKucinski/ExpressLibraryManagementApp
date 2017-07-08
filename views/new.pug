@@ -1,9 +1,10 @@
 extends ./layout.pug
 block content
+    include ./includes/_error
     if content === 'books'
-        include ./includes/_book_form.pug
+        include ./includes/_book_form
     else if content === 'patrons'
-        include ./includes/_patron_form.pug
+        include ./includes/_patron_form
     else if content === 'loans'
-        include ./includes/_loan_form.pug
+        include ./includes/_loan_form
 

@@ -66,17 +66,27 @@ router.get('/', (req, res, next) => {
 
 router.get('/new', (req, res, next) => {
     const title = 'New Book';
-    res.render('new', { title, content });
+    res.render('new', { title, book: {}, content });
 });
 
 router.post('/new', (req, res, next) => {
-    Book.create({
-        title: req.body.title,
-        author: req.body.author,
-        first_published: req.body.first_published,
-        genre: req.body.genre
-    }).then(() => {
+    Book.create(req.body).then(() => {
         res.redirect('/books');
+    }).catch(error => {
+        if (error.name === "SequelizeValidationError") {
+            detail = false;
+            const book = Book.build(req.body);
+
+            const bookData = book.get({
+                plain: true
+            });
+
+            res.render('new', { detail, book: bookData, errors: error.errors, title: 'New Book', content });
+        } else {
+            throw error;
+        }
+    }).catch(error => {
+        res.send(500, error);
     });
 });
 

@@ -4,17 +4,17 @@ form(action=`/${content}/new`, method="post")
         label(for="book_id") Book
         select(id="book_id", name="bookId")
             each book in books
-                option(value=`${ book.id }`)= book.title
+                option(value=book.id)= book.title
     p
         label(for="patron_id") Patron
         select(id="patron_id", name="patronId")
             each patron in patrons
-                option(value=`${ patron.id }`)= patron.fullName 
+                option(value=patron.id)= patron.fullName 
     p
         label(for="loaned_on") Loaned on
-        input(id="loaned_on", name="loanedOn", type="text", value=`${ loanedOn }`)
+        input(id="loaned_on", name="loanedOn", type="text", value=loanedOn)
     p
         label(for="return_by") Return by
-        input(id="return_by", name="returnBy", type="text", value=`${ returnBy }`)
+        input(id="return_by", name="returnBy", type="text", value=returnBy)
     p
         input(type="submit", value="Create New Loan")

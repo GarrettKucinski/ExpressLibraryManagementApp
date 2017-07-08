@@ -5,21 +5,27 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true
+                notEmpty: {
+                    msg: 'You must provide a book title.'
+                },
             }
         },
         genre: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true
+                notEmpty: {
+                    msg: 'You must provide a genre.'
+                },
             }
         },
         author: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true
+                notEmpty: {
+                    msg: 'You must provide an author'
+                },
             }
         },
         first_published: {
@@ -27,7 +33,10 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: true,
             defaultValue: null,
             validate: {
-                not: /[a-zA-Z!@#$%\^&*()_+=[\]{}:;'".,/\\?`~\-<>]/gim
+                not: {
+                    args: /[a-zA-Z!@#$%\^&*()_+=[\]{}:;'".,/\\?`~\-<>]/gim,
+                    msg: 'The year first published can only contain numbers in the format: ex. 1999'
+                }
             }
         }
     }, {

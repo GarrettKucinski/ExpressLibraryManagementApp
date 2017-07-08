@@ -33,19 +33,26 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/new', (req, res, next) => {
-    res.render('new', { content });
+    res.render('new', { content, patronDetails: {} });
 });
 
 router.post('/new', (req, res, next) => {
-    Patron.create({
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        address: req.body.address,
-        email: req.body.email,
-        library_id: req.body.library_id,
-        zip_code: req.body.zip_code
-    }).then(() => {
+    Patron.create(req.body).then(() => {
         res.redirect('/patrons');
+    }).catch(error => {
+        if (error.name === "SequelizeValidationError") {
+            const patron = Patron.build(req.body);
+
+            const patronData = patron.get({
+                plain: true
+            });
+
+            res.render('new', { patronDetails: patronData, errors: error.errors, title: 'New Patron', content });
+        } else {
+            throw error;
+        }
+    }).catch(error => {
+        res.send(500, error);
     });
 });
 

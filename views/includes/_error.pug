@@ -1,3 +1,5 @@
-h2.error Oooops!
-ul.error
-    li Author is required
+if errors
+    h2.error Error! 
+    for error in errors
+        ul.error
+            li= error.message

@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 
-const homeRoute = require('./routes/home');
+const homeRoute = require('./routes');
 const booksRoute = require('./routes/books');
 const loansRoute = require('./routes/loans');
 const patronsRoute = require('./routes/patrons');

@@ -4,37 +4,63 @@ module.exports = function(sequelize, DataTypes) {
         book_id: {
             type: DataTypes.INTEGER,
             validate: {
-                notEmpty: true,
+                notEmpty: {
+                    msg: 'You must specify a valid book id.'
+                }
             }
         },
         patron_id: {
             type: DataTypes.INTEGER,
             validate: {
-                notEmpty: true,
+                notEmpty: {
+                    msg: 'You must specify a valid patron id.'
+                }
             }
         },
         loaned_on: {
             type: DataTypes.DATEONLY,
             validate: {
-                notEmpty: true,
-                is: /[0-9]\-/gim,
-                isDate: true,
+                notEmpty: {
+                    msg: 'The you must specify the loaned on date.'
+                },
+                is: {
+                    args: /[0-9]\-/gim,
+                    msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
+                },
+                isDate: {
+                    msg: 'The loaned on field must contain a valid date. ex. 2017-07-08'
+                }
             }
         },
         return_by: {
             type: DataTypes.DATEONLY,
             validate: {
-                notEmpty: true,
-                is: /[0-9]\-/gim,
-                isDate: true,
+                notEmpty: {
+                    msg: 'You must specify a return by date.'
+                },
+                is: {
+                    args: /[0-9]\-/gim,
+                    msg: 'The return by date must be in the correct format. ex. 2017-07-08'
+                },
+                isDate: {
+                    msg: 'The return by date field must contain a valid date. ex. 2017-07-08'
+                }
             }
         },
         returned_on: {
             type: DataTypes.DATEONLY,
+            allowNull: true,
             validate: {
-                notEmpty: true,
-                is: /[0-9]\-/gim,
-                isDate: true,
+                notEmpty: {
+                    msg: 'You must specify a return on date.'
+                },
+                is: {
+                    args: /[0-9]\-/gim,
+                    msg: 'The return on date must be in the correct format. ex. 2017-07-08'
+                },
+                isDate: {
+                    msg: 'The return on date field must contain a valid date. ex. 2017-07-08'
+                }
             }
         }
     }, {

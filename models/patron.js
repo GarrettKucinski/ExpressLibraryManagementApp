@@ -5,43 +5,58 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true
+                notEmpty: {
+                    msg: 'You must enter a first name for this patron.'
+                }
             }
         },
         last_name: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true
+                notEmpty: {
+                    msg: 'You must enter a last name for this patron.'
+                }
             }
         },
         address: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true
+                notEmpty: {
+                    msg: 'You must enter an address for this patron.'
+                }
             }
         },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                isEmail: true
+                isEmail: {
+                    msg: 'You must enter an valid email for this patron.'
+                }
             }
         },
         library_id: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                notEmpty: true
+                notEmpty: {
+                    msg: 'The library id cannot be blank.'
+                }
             }
         },
         zip_code: {
             type: DataTypes.INTEGER,
             allowNull: false,
             validate: {
-                not: /[a-zA-Z!@#$%\^&*()_+=[\]{}:;'".,/\\?`~\-<>]/gim,
-                notEmpty: false
+                not: {
+                    args: /[a-zA-Z!@#$%\^&*()_+=[\]{}:;'".,/\\?`~\-<>]/gim,
+                    msg: 'The zip code can only contain the numbers 0-9'
+                },
+                notEmpty: {
+                    msg: 'You must enter a valid zip code'
+                }
             }
         }
     }, {
