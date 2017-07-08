@@ -3,7 +3,7 @@ for loanedBook in loanedBooks
         td 
             a(href=`/books/${ loanedBook.book_id }/${ loanedBook.Book.title.replace(/ /g, '_') }`)= loanedBook.Book.title
         td
-            a(href=`/patrons/${ loanedBook.patron_id }/${ loanedBook.Patron.fullName.replace(/ /g, '_') }`)= loanedBook.Patron.fullName
+            a(href=`/patrons/${ loanedBook.patron_id }/${ loanedBook.Patron.full_name.replace(/ /g, '_') }`)= loanedBook.Patron.full_name 
         td= loanedBook.loaned_on
         td= loanedBook.return_by
         td= loanedBook.returned_on

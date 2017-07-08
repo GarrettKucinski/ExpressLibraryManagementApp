@@ -10,16 +10,7 @@ const content = 'patrons';
 
 router.get('/', (req, res, next) => {
 
-    Patron.findAll({
-        attributes: [
-            ['id', 'id'],
-            [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName'],
-            ['address', 'address'],
-            ['email', 'email'],
-            ['library_id', 'library_id'],
-            ['zip_code', 'zip']
-        ]
-    }).then(patrons => {
+    Patron.findAll().then(patrons => {
 
         const columns = [
             "Name",
@@ -59,12 +50,15 @@ router.post('/new', (req, res, next) => {
 });
 
 router.get('/:id', (req, res, next) => {
-    Patron.findAll({
-        where: [{
-            id: req.params.id
-        }],
-    }).then(patron => {
-        res.redirect(`/patrons/${req.params.id}/${patron[0].dataValues.first_name}_${patron[0].dataValues.last_name}`);
+    Patron.findById(req.params.id).then(patron => {
+
+        const patronData = patron.get({
+            plain: true
+        });
+
+        const patronName = patronData.full_name.split(' ').join('_');
+
+        res.redirect(`/patrons/${ req.params.id }/${ patronName }`);
     });
 });
 
@@ -84,7 +78,7 @@ router.get('/:id/:name', (req, res, next) => {
 
         for (let loan of patronDetails.Loans) {
             loan.Patron = {};
-            loan.Patron.fullName = `${ patronDetails.first_name } ${ patronDetails.last_name }`;
+            loan.Patron.full_name = patronDetails.full_name;
         }
 
         const detail = true;
@@ -97,9 +91,16 @@ router.get('/:id/:name', (req, res, next) => {
             "Return On"
         ];
 
-        const title = `Patron: ${ patronDetails.first_name } ${ patronDetails.last_name}`;
+        const title = `Patron: ${ patronDetails.full_name }`;
 
-        res.render('detail', { detail, patronDetails, content, title, columns, loanedBooks: patronDetails.Loans });
+        res.render('detail', {
+            detail,
+            patronDetails,
+            content,
+            title,
+            columns,
+            loanedBooks: patronDetails.Loans
+        });
 
     }).catch(err => {
         console.log(err);

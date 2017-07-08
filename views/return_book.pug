@@ -2,13 +2,13 @@ extends ./layout.pug
 block content
     h1= title
     p
-        strong Book Title: #{ loanedBook.bookTitle } 
+        strong Book Title: #{ loanedBook.Book.title } 
     p
-        strong Loaned By: #{ loanedBook.patronName } 
+        strong Loaned By: #{ loanedBook.Patron.full_name } 
     p
-        strong Loaned On: #{ loanedBook.loanedOn } 
+        strong Loaned On: #{ loanedBook.loaned_on } 
     p
-        strong Return By: #{ loanedBook.returnBy } 
+        strong Return By: #{ loanedBook.return_by } 
     form(action="", method="post")
         p
             label(for="returned_on") Returned On

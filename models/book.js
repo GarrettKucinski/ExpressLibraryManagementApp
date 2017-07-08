@@ -1,13 +1,33 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
     var Book = sequelize.define('Book', {
-        title: DataTypes.STRING,
-        genre: DataTypes.STRING,
-        author: DataTypes.STRING,
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: true
+            }
+        },
+        genre: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: true
+            }
+        },
+        author: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: true
+            }
+        },
         first_published: {
             type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: null,
             validate: {
-                isInt: true
+                not: /[a-zA-Z!@#$%\^&*()_+=[\]{}:;'".,/\\?`~\-<>]/gim
             }
         }
     }, {

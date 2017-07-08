@@ -29,7 +29,8 @@ router.get('/', (req, res, next) => {
             model: Patron,
             attributes: [
                 ['id', 'id'],
-                [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName'],
+                ['first_name', 'first_name'],
+                ['last_name', 'last_name'],
             ]
         }]
     }).then(loans => {

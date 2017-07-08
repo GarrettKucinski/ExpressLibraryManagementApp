@@ -93,19 +93,16 @@ router.get('/:id/return', (req, res, next) => {
         }, {
             model: Patron,
             attributes: [
-                [Patron.sequelize.literal('first_name || " " || last_name'), 'name'],
+                ['first_name', 'first_name'],
+                ['last_name', 'last_name']
             ]
         }]
     }).then(loan => {
-        const loaner = loan.get({
+
+        const loanedBook = loan.get({
             plain: true
         });
-        const loanedBook = Object.assign({}, {
-            bookTitle: loan.Book.dataValues.title,
-            patronName: loan.Patron.dataValues.name,
-            loanedOn: loan.dataValues.loaned_on,
-            returnBy: loan.dataValues.return_by
-        });
+
         res.render('return_book', { today, loanedBook });
     });
 });
@@ -148,8 +145,8 @@ router.get('/:id/:title', (req, res, next) => {
         include: [{
             model: Patron,
             attributes: [
-                // ['id', 'id'],
-                [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName']
+                ['first_name', 'first_name'],
+                ['last_name', 'last_name']
             ]
         }, {
             model: Book,
