@@ -14,12 +14,13 @@ router.get('/', (req, res, next) => {
         attributes: [
             ['id', 'id'],
             [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName'],
-            ['address', 'Address'],
-            ['email', 'Email'],
-            ['library_id', 'Library ID'],
-            ['zip_code', 'Zip']
+            ['address', 'address'],
+            ['email', 'email'],
+            ['library_id', 'library_id'],
+            ['zip_code', 'zip']
         ]
     }).then(patrons => {
+
         const columns = [
             "Name",
             "Address",
@@ -27,14 +28,10 @@ router.get('/', (req, res, next) => {
             "Library ID",
             "Zip"
         ];
+
         const patronData = patrons.map(patron => {
-            return Object.assign({}, {
-                id: patron.dataValues.id,
-                fullName: patron.dataValues.fullName,
-                address: patron.dataValues.Address,
-                email: patron.dataValues.Email,
-                libraryId: patron.dataValues['Library ID'],
-                zip: patron.dataValues.Zip
+            return patron.get({
+                plain: true
             });
         });
 
@@ -81,6 +78,15 @@ router.get('/:id/:name', (req, res, next) => {
             include: Book
         }]
     }).then(patron => {
+        const patronDetails = patron[0].get({
+            plain: true
+        });
+
+        for (let loan of patronDetails.Loans) {
+            loan.Patron = {};
+            loan.Patron.fullName = `${ patronDetails.first_name } ${ patronDetails.last_name }`;
+        }
+
         const detail = true;
 
         const columns = [
@@ -91,30 +97,9 @@ router.get('/:id/:name', (req, res, next) => {
             "Return On"
         ];
 
-        const patronDetails = Object.assign({}, {
-            id: patron[0].dataValues.id,
-            firstName: patron[0].dataValues.first_name,
-            lastName: patron[0].dataValues.last_name,
-            address: patron[0].dataValues.address,
-            email: patron[0].dataValues.email,
-            libraryId: patron[0].dataValues.library_id,
-            zip: patron[0].dataValues.zip_code,
-            loans: patron[0].Loans.map(loan => {
-                return Object.assign({}, {
-                    bookName: loan.Book.dataValues.title,
-                    bookId: loan.Book.dataValues.id,
-                    patronName: `${ patron[0].dataValues.first_name } ${ patron[0].dataValues.last_name }`,
-                    patronId: patron[0].dataValues.id,
-                    loanedOn: loan.dataValues.loaned_on,
-                    returnBy: loan.dataValues.return_by,
-                    returnedOn: loan.dataValues.returned_on
-                });
-            })
-        });
+        const title = `Patron: ${ patronDetails.first_name } ${ patronDetails.last_name}`;
 
-        const title = `Patron: ${ patronDetails.firstName } ${ patronDetails.lastName}`;
-
-        res.render('detail', { detail, patronDetails, content, title, columns, loanedBooks: patronDetails.loans });
+        res.render('detail', { detail, patronDetails, content, title, columns, loanedBooks: patronDetails.Loans });
 
     }).catch(err => {
         console.log(err);

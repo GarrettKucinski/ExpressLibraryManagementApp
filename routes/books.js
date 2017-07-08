@@ -14,18 +14,9 @@ const today = moment().format('YYYY[-]MM[-]DD');
 
 router.get('/', (req, res, next) => {
 
-    let query = Book.findAll({
-        attributes: [
-            ['id', 'id'],
-            ['title', 'Title'],
-            ['author', 'Author'],
-            ['genre', 'Genre'],
-            ['first_published', 'First Published']
-        ],
+    Book.findAll({
         include: Loan
-    });
-
-    query.then(books => {
+    }).then(books => {
 
         const columns = [
             "Title",
@@ -35,23 +26,16 @@ router.get('/', (req, res, next) => {
         ];
 
         let bookData = books.map(book => {
-            return Object.assign({}, {
-                id: book.dataValues.id,
-                title: book.dataValues.Title,
-                author: book.dataValues.Author,
-                genre: book.dataValues.Genre,
-                firstPublished: book.dataValues['First Published'],
-                loans: book.dataValues.Loans.map(loan => {
-                    return loan;
-                })
+            return book.get({
+                plain: true
             });
         });
 
         if (req.query.filter === 'overdue') {
             bookData = bookData.filter(book => {
-                if (book.loans.length > 0) {
-                    for (let loan of book.loans) {
-                        if (loan.dataValues.returned_on === null && loan.dataValues.return_by < today) {
+                if (book.Loans.length > 0) {
+                    for (let loan of book.Loans) {
+                        if (loan.returned_on === null && loan.return_by < today) {
                             return book;
                         }
                     }
@@ -61,9 +45,11 @@ router.get('/', (req, res, next) => {
 
         if (req.query.filter === 'checked_out') {
             bookData = bookData.filter(book => {
-                if (book.loans.length > 0) {
-                    for (let loan of book.loans) {
-                        return loan.dataValues.returned_on === null && loan.dataValues.loaned_on !== null;
+                if (book.Loans.length > 0) {
+                    for (let loan of book.Loans) {
+                        if (loan.returned_on === null && loan.loaned_on !== null) {
+                            return loan;
+                        }
                     }
                 }
             });
@@ -111,6 +97,9 @@ router.get('/:id/return', (req, res, next) => {
             ]
         }]
     }).then(loan => {
+        const loaner = loan.get({
+            plain: true
+        });
         const loanedBook = Object.assign({}, {
             bookTitle: loan.Book.dataValues.title,
             patronName: loan.Patron.dataValues.name,
@@ -159,8 +148,8 @@ router.get('/:id/:title', (req, res, next) => {
         include: [{
             model: Patron,
             attributes: [
-                ['id', 'id'],
-                [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName'],
+                // ['id', 'id'],
+                [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName']
             ]
         }, {
             model: Book,
@@ -185,24 +174,13 @@ router.get('/:id/:title', (req, res, next) => {
             "Returned On"
         ];
 
-        const book = Object.assign({}, {
-            id: data[0][0].dataValues.id,
-            title: data[0][0].dataValues.title,
-            genre: data[0][0].dataValues.genre,
-            author: data[0][0].dataValues.author,
-            firstPublished: data[0][0].dataValues.first_published
+        const book = data[0][0].get({
+            plain: true
         });
 
         const loanedBooks = data[1].map(loan => {
-            return Object.assign({}, {
-                loanId: loan.id,
-                bookName: data[0][0].dataValues.title,
-                bookId: data[0][0].dataValues.id,
-                patronName: loan.Patron.dataValues.fullName,
-                patronId: loan.Patron.dataValues.id,
-                loanedOn: loan.dataValues.loaned_on,
-                returnBy: loan.dataValues.return_by,
-                returnedOn: loan.dataValues.returned_on
+            return loan.get({
+                plain: true
             });
         });
 

@@ -23,13 +23,13 @@ router.get('/', (req, res, next) => {
             model: Book,
             attributes: [
                 ['id', 'id'],
-                ['title', 'Title']
+                ['title', 'title']
             ]
         }, {
             model: Patron,
             attributes: [
                 ['id', 'id'],
-                [Patron.sequelize.literal('first_name || " " || last_name'), 'Name'],
+                [Patron.sequelize.literal('first_name || " " || last_name'), 'fullName'],
             ]
         }]
     }).then(loans => {
@@ -40,23 +40,17 @@ router.get('/', (req, res, next) => {
             "Return By",
             "Return On"
         ];
+
         let loanedBooks = loans.map(loan => {
-            return Object.assign({}, {
-                bookId: loan.dataValues.Book.dataValues.id,
-                patronId: loan.dataValues.Patron.dataValues.id,
-                bookName: loan.dataValues.Book.dataValues.Title,
-                patronName: loan.dataValues.Patron.dataValues.Name,
-                loanId: loan.dataValues.id,
-                loanedOn: loan.dataValues.loaned_on,
-                returnBy: loan.dataValues.return_by,
-                returnedOn: loan.dataValues.returned_on
+            return loan.get({
+                plain: true
             });
         });
 
         if (req.query.filter === 'overdue') {
             console.log('overdue');
             loanedBooks = loanedBooks.filter(loanedBook => {
-                if (loanedBook.returnedOn === null && loanedBook.returnBy < today) {
+                if (loanedBook.returned_on === null && loanedBook.return_by < today) {
                     return loanedBook;
                 }
             });
@@ -64,7 +58,7 @@ router.get('/', (req, res, next) => {
 
         if (req.query.filter === 'checked_out') {
             loanedBooks = loanedBooks.filter(loanedBook => {
-                return loanedBook.returnedOn === null && loanedBook.loanedOn !== null;
+                return loanedBook.returned_on === null && loanedBook.loaned_on !== null;
             });
         }
 

@@ -1,12 +1,12 @@
 for loanedBook in loanedBooks
     tr
         td 
-            a(href=`/books/${ loanedBook.bookId }/${ loanedBook.bookName.replace(/ /g, '_') }`)= loanedBook.bookName
+            a(href=`/books/${ loanedBook.book_id }/${ loanedBook.Book.title.replace(/ /g, '_') }`)= loanedBook.Book.title
         td
-            a(href=`/patrons/${ loanedBook.patronId }/${ loanedBook.patronName.replace(/ /g, '_') }`)= loanedBook.patronName
-        td= loanedBook.loanedOn
-        td= loanedBook.returnBy
-        td= loanedBook.returnedOn
-        if loanedBook.returnedOn === null
+            a(href=`/patrons/${ loanedBook.patron_id }/${ loanedBook.Patron.fullName.replace(/ /g, '_') }`)= loanedBook.Patron.fullName
+        td= loanedBook.loaned_on
+        td= loanedBook.return_by
+        td= loanedBook.returned_on
+        if loanedBook.returned_on === null
             td 
-                a.button(href=`/books/${ loanedBook.loanId }/return`) Return Book
+                a.button(href=`/books/${ loanedBook.id }/return`) Return Book

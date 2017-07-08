@@ -11,6 +11,6 @@ form(action=`${ detail ? `/${ content }/${ book.id }/${ book.title.replace(/ /g,
         input(id="genre", name="genre", type="text", value=`${ detail ? book.genre : '' }`)
     p
         label(for="first_published") First Published
-        input(id="first_published", name="first_published", type="text", value=`${ detail ? book.firstPublished : '' }`)
+        input(id="first_published", name="first_published", type="text", value=`${ detail ? book.first_published : '' }`)
     p
         input(type="submit", value=`${ detail ? 'Update' : 'Create New Book'}`)
