@@ -238,7 +238,10 @@ router.get('/:id/:title', (req, res, next) => {
 });
 
 router.post('/:id/:name', (req, res, next) => {
-    Loan.findAll({
+
+    const bookData = Book.findById(req.params.id);
+
+    const loanData = Loan.findAll({
         where: {
             loaned_on: {
                 $not: null
@@ -256,7 +259,13 @@ router.post('/:id/:name', (req, res, next) => {
                 id: req.params.id
             }
         }]
-    }).then(loan => {
+    });
+
+    Promise.all([
+        bookData,
+        loanData
+    ]).then(data => {
+
         Book.update(req.body, {
             where: {
                 id: req.params.id
@@ -268,19 +277,17 @@ router.post('/:id/:name', (req, res, next) => {
 
                 detail = true;
 
-                const book = Book.build(req.body);
-
-                const bookData = book.get({
+                const book = data[0].get({
                     plain: true
                 });
 
-                const loanedBooks = loan.map(loan => {
+                const loanedBooks = data[1].map(loan => {
                     return loan.get({
                         plain: true
                     });
                 });
 
-                const title = `Book: ${ bookData.title }`;
+                const title = `Book: ${ book.title }`;
 
                 const columns = [
                     "Book",
@@ -290,7 +297,7 @@ router.post('/:id/:name', (req, res, next) => {
                     "Returned On"
                 ];
 
-                res.render('detail', { detail, columns, loanedBooks, book: bookData, errors: error.errors, title, content });
+                res.render('detail', { detail, columns, loanedBooks, book, errors: error.errors, title, content });
             } else {
                 throw error;
             }

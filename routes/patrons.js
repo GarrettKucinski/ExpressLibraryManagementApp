@@ -75,7 +75,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.get('/:id/:name', (req, res, next) => {
-    Patron.findAll({
+    Patron.findOne({
         where: [{
             id: req.params.id
         }],
@@ -84,7 +84,7 @@ router.get('/:id/:name', (req, res, next) => {
             include: Book
         }]
     }).then(patron => {
-        const patronDetails = patron[0].get({
+        const patronDetails = patron.get({
             plain: true
         });
 
@@ -120,17 +120,37 @@ router.get('/:id/:name', (req, res, next) => {
 });
 
 router.post('/:id/:name', (req, res, next) => {
-    Loan.findAll({
-        where: {
-            patron_id: req.params.id
-        },
-        include: {
-            model: Book,
-            attributes: [
-                ['title', 'title']
-            ]
+    Patron.findOne({
+        where: [{
+            id: req.params.id
+        }],
+        include: [{
+            model: Loan,
+            include: Book
+        }]
+    }).then(patron => {
+
+        const patronDetails = patron.get({
+            plain: true
+        });
+
+        for (let loan of patronDetails.Loans) {
+            loan.Patron = {};
+            loan.Patron.full_name = patronDetails.full_name;
         }
-    }).then(loan => {
+
+        const detail = true;
+
+        const columns = [
+            "Book",
+            "Patron",
+            "Loaned On",
+            "Return By",
+            "Return On"
+        ];
+
+        const title = `Patron: ${ patronDetails.full_name }`;
+
         Patron.update(req.body, {
             where: {
                 id: req.params.id
@@ -141,36 +161,7 @@ router.post('/:id/:name', (req, res, next) => {
 
             if (error.name === "SequelizeValidationError") {
 
-                const patronData = Patron.build(req.body);
-
-                const patronDetails = patronData.get({
-                    plain: true
-                });
-
-                const loanedBooks = loan.map(loan => {
-                    return loan.get({
-                        plain: true
-                    });
-                });
-
-                for (let loan of loanedBooks) {
-                    loan.Patron = {};
-                    loan.Patron.full_name = `${ patronDetails.first_name } ${ patronDetails.last_name }`;
-                }
-
-                const detail = true;
-
-                const columns = [
-                    "Book",
-                    "Patron",
-                    "Loaned On",
-                    "Return By",
-                    "Return On"
-                ];
-
-                const title = `Patron: ${ loanedBooks[0].Patron.full_name }`;
-
-                res.render('detail', { detail, columns, patronDetails, title, loanedBooks, errors: error.errors, content });
+                res.render('detail', { detail, columns, patronDetails, title, loanedBooks: patronDetails.Loans, errors: error.errors, content });
             } else {
                 throw error;
             }

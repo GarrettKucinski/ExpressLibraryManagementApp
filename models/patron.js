@@ -32,8 +32,11 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
+                notEmpty: {
+                    msg: 'Patron email field cannot be empty.'
+                },
                 isEmail: {
-                    msg: 'You must enter an valid email for this patron.'
+                    msg: 'You must enter an valid email for this patron. ex. person@website.com'
                 }
             }
         },
