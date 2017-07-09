@@ -48,20 +48,7 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         returned_on: {
-            type: DataTypes.DATEONLY,
-            allowNull: true,
-            validate: {
-                notEmpty: {
-                    msg: 'You must specify a return on date.'
-                },
-                is: {
-                    args: /[0-9]\-/gim,
-                    msg: 'The return on date must be in the correct format. ex. 2017-07-08'
-                },
-                isDate: {
-                    msg: 'The return on date field must contain a valid date. ex. 2017-07-08'
-                }
-            }
+            type: DataTypes.DATEONLY
         }
     }, {
         classMethods: {
