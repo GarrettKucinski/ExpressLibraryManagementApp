@@ -154,9 +154,11 @@ router.post('/:id/return', (req, res, next) => {
 
         if (!req.body.returned_on) {
             errors.push(new Error('Return date cannot be empty'));
-            if (!dateMatch.test(req.body.returned_on.toString())) {
-                errors.push(new Error('You must enter a valid date. ex. 2017-07-08'));
-            }
+        } else if (!dateMatch.test(req.body.returned_on.toString())) {
+            errors.push(new Error('You must enter a valid date. ex. 2017-07-08'));
+        }
+
+        if (errors) {
             res.render('return_book', { errors, title, today, loanedBook });
         } else {
             loan.update({
