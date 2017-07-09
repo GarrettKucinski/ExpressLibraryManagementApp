@@ -8,22 +8,66 @@ const Loan = require('../models').Loan;
 const Patron = require('../models').Patron;
 
 let detail;
-const content = 'books';
+let currentPage;
 
+const content = 'books';
 const today = moment().format('YYYY[-]MM[-]DD');
 
 router.get('/', (req, res, next) => {
 
-    Book.findAndCountAll({
+    if (req.query.page === undefined && req.query.filter === undefined) {
+        res.redirect('/books?page=1');
+    }
+
+    let bookQuery = Book.findAndCountAll({
         order: [
             ['title', 'ASC']
         ],
         limit: 10,
-        offset: 0,
-        include: Loan
-    }).then(books => {
+        offset: (req.query.page * 10) - 10,
+        // include: Loan
+    });
 
-        const count = Math.ceil(books.count / 10);
+    if (req.query.filter === 'overdue') {
+        bookQuery = Book.findAndCountAll({
+            order: [
+                ['title', 'ASC']
+            ],
+            limit: 10,
+            offset: (req.query.page * 10) - 10,
+            include: {
+                model: Loan,
+                where: {
+                    return_by: {
+                        lt: today
+                    },
+                    returned_on: null
+                }
+            }
+        });
+    }
+
+    if (req.query.filter === 'checked_out') {
+        bookQuery = Book.findAndCountAll({
+            order: [
+                ['title', 'ASC']
+            ],
+            limit: 10,
+            offset: (req.query.page * 10) - 10,
+            include: {
+                model: Loan,
+                where: {
+                    returned_on: null
+                }
+            }
+        });
+    }
+
+    bookQuery.then(books => {
+
+        const count = Math.round(books.count / 10);
+
+        currentPage = req.query.page;
 
         const columns = [
             "Title",
@@ -38,33 +82,9 @@ router.get('/', (req, res, next) => {
             });
         });
 
-        if (req.query.filter === 'overdue') {
-            bookData = bookData.filter(book => {
-                if (book.Loans.length > 0) {
-                    for (let loan of book.Loans) {
-                        if (loan.returned_on === null && loan.return_by < today) {
-                            return book;
-                        }
-                    }
-                }
-            });
-        }
-
-        if (req.query.filter === 'checked_out') {
-            bookData = bookData.filter(book => {
-                if (book.Loans.length > 0) {
-                    for (let loan of book.Loans) {
-                        if (loan.returned_on === null && loan.loaned_on !== null) {
-                            return loan;
-                        }
-                    }
-                }
-            });
-        }
-
         const title = "Books";
 
-        res.render('all', { count, bookData, columns, title, content });
+        res.render('all', { count, currentPage, bookData, columns, title, content });
 
     }).catch(error => {
         res.status(500).send(error);

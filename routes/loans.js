@@ -13,7 +13,12 @@ const today = moment().format('YYYY[-]MM[-]DD');
 const aWeekFromNow = moment().add(7, 'days').format('YYYY[-]MM[-]DD');
 
 router.get('/', (req, res, next) => {
-    Loan.findAll({
+
+    if (req.query.page === undefined && req.query.filter === undefined) {
+        res.redirect('/loans?page=1');
+    }
+
+    let loanQuery = Loan.findAndCountAll({
         where: [{
             loaned_on: {
                 $not: null
@@ -23,6 +28,8 @@ router.get('/', (req, res, next) => {
             ['patron_id', 'ASC'],
             ['returned_on', 'ASC']
         ],
+        limit: 10,
+        offset: (req.query.page * 10) - 10,
         include: [{
             model: Book,
             attributes: [
@@ -37,7 +44,74 @@ router.get('/', (req, res, next) => {
                 ['last_name', 'last_name'],
             ]
         }]
-    }).then(loans => {
+    });
+
+    if (req.query.filter === 'overdue') {
+        loanQuery = Loan.findAndCountAll({
+            where: [{
+                loaned_on: {
+                    $not: null
+                },
+                returned_on: null,
+                return_by: {
+                    $lt: today
+                }
+            }],
+            order: [
+                ['patron_id', 'ASC'],
+                ['returned_on', 'ASC']
+            ],
+            limit: 10,
+            offset: (req.query.page * 10) - 10,
+            include: [{
+                model: Book,
+                attributes: [
+                    ['id', 'id'],
+                    ['title', 'title']
+                ]
+            }, {
+                model: Patron,
+                attributes: [
+                    ['id', 'id'],
+                    ['first_name', 'first_name'],
+                    ['last_name', 'last_name'],
+                ]
+            }]
+        });
+    }
+
+    if (req.query.filter === 'checked_out') {
+        loanQuery = Loan.findAndCountAll({
+            where: [{
+                loaned_on: {
+                    $not: null
+                },
+                returned_on: null
+            }],
+            order: [
+                ['patron_id', 'ASC'],
+                ['returned_on', 'ASC']
+            ],
+            limit: 10,
+            offset: (req.query.page * 10) - 10,
+            include: [{
+                model: Book,
+                attributes: [
+                    ['id', 'id'],
+                    ['title', 'title']
+                ]
+            }, {
+                model: Patron,
+                attributes: [
+                    ['id', 'id'],
+                    ['first_name', 'first_name'],
+                    ['last_name', 'last_name'],
+                ]
+            }]
+        });
+    }
+
+    loanQuery.then(loans => {
         const columns = [
             "Book",
             "Patron",
@@ -46,30 +120,19 @@ router.get('/', (req, res, next) => {
             "Return On"
         ];
 
-        let loanedBooks = loans.map(loan => {
+        const count = Math.round(loans.count / 10);
+
+        // currentPage = req.query.page;
+
+        let loanedBooks = loans.rows.map(loan => {
             return loan.get({
                 plain: true
             });
         });
 
-        if (req.query.filter === 'overdue') {
-            console.log('overdue');
-            loanedBooks = loanedBooks.filter(loanedBook => {
-                if (loanedBook.returned_on === null && loanedBook.return_by < today) {
-                    return loanedBook;
-                }
-            });
-        }
-
-        if (req.query.filter === 'checked_out') {
-            loanedBooks = loanedBooks.filter(loanedBook => {
-                return loanedBook.returned_on === null && loanedBook.loaned_on !== null;
-            });
-        }
-
         const title = "Loans";
 
-        res.render('all', { loanedBooks, columns, title, content });
+        res.render('all', { loanedBooks, count, columns, title, content });
     });
 });
 
