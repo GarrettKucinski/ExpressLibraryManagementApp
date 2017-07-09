@@ -62,8 +62,8 @@ router.get('/', (req, res, next) => {
 
         res.render('all', { bookData, columns, title, content });
 
-    }).catch(err => {
-        console.log(err);
+    }).catch(error => {
+        res.status(500).send(error);
     });
 });
 
@@ -89,7 +89,7 @@ router.post('/new', (req, res, next) => {
             throw error;
         }
     }).catch(error => {
-        res.send(500, error);
+        res.status(500).send(error);
     });
 });
 
@@ -233,7 +233,7 @@ router.get('/:id/:title', (req, res, next) => {
         res.render('detail', { content, detail, title, book, columns, loanedBooks });
 
     }).catch(error => {
-        res.send(500, error);
+        res.status(500).send(error);
     });
 });
 
@@ -302,7 +302,7 @@ router.post('/:id/:name', (req, res, next) => {
                 throw error;
             }
         }).catch(error => {
-            res.send(500, error);
+            res.status(500).send(error);
         });
     });
 });

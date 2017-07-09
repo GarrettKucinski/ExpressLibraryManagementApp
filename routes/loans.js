@@ -153,7 +153,7 @@ router.post('/new', (req, res, next) => {
             throw error;
         }
     }).catch(error => {
-        res.send(500, error);
+        res.status(500).send(error);
     });
 });
 
