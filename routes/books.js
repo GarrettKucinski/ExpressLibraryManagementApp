@@ -109,23 +109,62 @@ router.get('/:id/return', (req, res, next) => {
         }]
     }).then(loan => {
 
+
         const loanedBook = loan.get({
             plain: true
         });
 
-        res.render('return_book', { today, loanedBook });
+        const title = `Return ${ loanedBook.Book.title }`;
+
+        res.render('return_book', { today, title, loanedBook });
     });
 });
 
 router.post('/:id/return', (req, res, next) => {
-    Loan.update({
-        returned_on: req.body.returned_on
-    }, {
+
+    Loan.findOne({
         where: {
             id: req.params.id
+        },
+        include: [{
+            model: Book,
+            attributes: [
+                ['title', 'title']
+            ]
+        }, {
+            model: Patron,
+            attributes: [
+                ['first_name', 'first_name'],
+                ['last_name', 'last_name']
+            ]
+        }]
+    }).then(loan => {
+
+        const dateMatch = /^\d{4}-\d{2}-\d{2}$/igm;
+
+        const loanedBook = loan.get({
+            plain: true
+        });
+
+        const title = `Return ${ loanedBook.Book.title }`;
+
+        if (req.body.returned_on) {
+            if (dateMatch.test(req.body.returned_on.toString())) {
+                loan.update({
+                    returned_on: req.body.returned_on
+                }).then(() => {
+                    res.redirect('/loans');
+                });
+            } else {
+                const validationError = new Error('You must enter a valid date. ex. 2017-07-08');
+                const errors = [validationError];
+                res.render('return_book', { errors, title, today, loanedBook });
+            }
+        } else {
+            const validationError = new Error('Return date cannot be empty');
+            const errors = [validationError];
+            res.render('return_book', { errors, title, today, loanedBook });
         }
-    }).then(() => {
-        res.redirect('/loans');
     });
 });
 

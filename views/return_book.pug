@@ -1,5 +1,6 @@
 extends ./layout
 block content
+    include ./includes/_error
     h1= title
     p
         strong Book Title: #{ loanedBook.Book.title } 
