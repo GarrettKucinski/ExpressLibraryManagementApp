@@ -1,10 +1,10 @@
-extends ./layout.pug
+extends ./layout
 block content
     if content === 'books'
-        include ./includes/_book_form.pug
+        include ./includes/_book_form
     else if content === 'patrons'
-        include ./includes/_patron_form.pug
+        include ./includes/_patron_form
     h2 Loan History
     table
-        include ./includes/_table_headers.pug
-        include ./includes/_loan_table.pug
+        include ./includes/_table_headers
+        include ./includes/_loan_table

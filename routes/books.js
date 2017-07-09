@@ -150,23 +150,20 @@ router.post('/:id/return', (req, res, next) => {
         });
 
         const title = `Return ${ loanedBook.Book.title }`;
+        const errors = [];
 
-        if (req.body.returned_on) {
-            if (dateMatch.test(req.body.returned_on.toString())) {
-                loan.update({
-                    returned_on: req.body.returned_on
-                }).then(() => {
-                    res.redirect('/loans');
-                });
-            } else {
-                const validationError = new Error('You must enter a valid date. ex. 2017-07-08');
-                const errors = [validationError];
-                res.render('return_book', { errors, title, today, loanedBook });
+        if (!req.body.returned_on) {
+            errors.push(new Error('Return date cannot be empty'));
+            if (!dateMatch.test(req.body.returned_on.toString())) {
+                errors.push(new Error('You must enter a valid date. ex. 2017-07-08'));
             }
-        } else {
-            const validationError = new Error('Return date cannot be empty');
-            const errors = [validationError];
             res.render('return_book', { errors, title, today, loanedBook });
+        } else {
+            loan.update({
+                returned_on: req.body.returned_on
+            }).then(() => {
+                res.redirect('/loans');
+            });
         }
     });
 });
@@ -182,11 +179,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.get('/:id/:title', (req, res, next) => {
-    const bookData = Book.findAll({
-        where: {
-            id: req.params.id
-        },
-    });
+    const bookData = Book.findById(req.params.id);
 
     const loanData = Loan.findAll({
         where: {
@@ -223,7 +216,7 @@ router.get('/:id/:title', (req, res, next) => {
             "Returned On"
         ];
 
-        const book = data[0][0].get({
+        const book = data[0].get({
             plain: true
         });
 
@@ -237,23 +230,71 @@ router.get('/:id/:title', (req, res, next) => {
 
         res.render('detail', { content, detail, title, book, columns, loanedBooks });
 
-    }).catch(err => {
-        console.log(err);
+    }).catch(error => {
+        res.send(500, error);
     });
 });
 
 router.post('/:id/:name', (req, res, next) => {
-    Book.update({
-        title: req.body.title,
-        author: req.body.author,
-        genre: req.body.genre,
-        first_published: req.body.first_published
-    }, {
+    Loan.findAll({
         where: {
-            id: req.params.id
-        }
-    }).then(() => {
-        res.redirect('/books');
+            loaned_on: {
+                $not: null
+            }
+        },
+        include: [{
+            model: Patron,
+            attributes: [
+                ['first_name', 'first_name'],
+                ['last_name', 'last_name']
+            ]
+        }, {
+            model: Book,
+            where: {
+                id: req.params.id
+            }
+        }]
+    }).then(loan => {
+        Book.update(req.body, {
+            where: {
+                id: req.params.id
+            }
+        }).then(() => {
+            res.redirect('/books');
+        }).catch(error => {
+            if (error.name === "SequelizeValidationError") {
+
+                detail = true;
+
+                const book = Book.build(req.body);
+
+                const bookData = book.get({
+                    plain: true
+                });
+
+                const loanedBooks = loan.map(loan => {
+                    return loan.get({
+                        plain: true
+                    });
+                });
+
+                const title = `Book: ${ bookData.title }`;
+
+                const columns = [
+                    "Book",
+                    "Patron",
+                    "Loaned On",
+                    "Return By",
+                    "Returned On"
+                ];
+
+                res.render('detail', { detail, columns, loanedBooks, book: bookData, errors: error.errors, title, content });
+            } else {
+                throw error;
+            }
+        }).catch(error => {
+            res.send(500, error);
+        });
     });
 });
 

@@ -1,12 +1,12 @@
-extends ./layout.pug
+extends ./layout
 block content
-    include ./includes/_filters.pug
+    include ./includes/_filters
     table
-        include ./includes/_table_headers.pug
+        include ./includes/_table_headers
         tbody
             if content === "loans"
-                include ./includes/_loan_table.pug
+                include ./includes/_loan_table
             if content === "books"
-                include ./includes/_book_table.pug
+                include ./includes/_book_table
             if content === "patrons"
-                include ./includes/_patron_table.pug
+                include ./includes/_patron_table
