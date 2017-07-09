@@ -10,7 +10,12 @@ const content = 'patrons';
 
 router.get('/', (req, res, next) => {
 
-    Patron.findAll().then(patrons => {
+    Patron.findAll({
+        order: [
+            ['last_name', 'ASC'],
+            ['first_name', 'ASC']
+        ]
+    }).then(patrons => {
 
         const columns = [
             "Name",

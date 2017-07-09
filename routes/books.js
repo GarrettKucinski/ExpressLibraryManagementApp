@@ -15,6 +15,9 @@ const today = moment().format('YYYY[-]MM[-]DD');
 router.get('/', (req, res, next) => {
 
     Book.findAll({
+        order: [
+            ['title', 'ASC']
+        ],
         include: Loan
     }).then(books => {
 

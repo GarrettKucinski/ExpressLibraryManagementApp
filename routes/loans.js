@@ -19,6 +19,10 @@ router.get('/', (req, res, next) => {
                 $not: null
             },
         }],
+        order: [
+            ['patron_id', 'ASC'],
+            ['returned_on', 'ASC']
+        ],
         include: [{
             model: Book,
             attributes: [
