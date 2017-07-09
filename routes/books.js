@@ -14,12 +14,16 @@ const today = moment().format('YYYY[-]MM[-]DD');
 
 router.get('/', (req, res, next) => {
 
-    Book.findAll({
+    Book.findAndCountAll({
         order: [
             ['title', 'ASC']
         ],
+        limit: 10,
+        offset: 0,
         include: Loan
     }).then(books => {
+
+        const count = Math.ceil(books.count / 10);
 
         const columns = [
             "Title",
@@ -28,7 +32,7 @@ router.get('/', (req, res, next) => {
             "First Published"
         ];
 
-        let bookData = books.map(book => {
+        let bookData = books.rows.map(book => {
             return book.get({
                 plain: true
             });
@@ -60,7 +64,7 @@ router.get('/', (req, res, next) => {
 
         const title = "Books";
 
-        res.render('all', { bookData, columns, title, content });
+        res.render('all', { count, bookData, columns, title, content });
 
     }).catch(error => {
         res.status(500).send(error);
@@ -177,6 +181,8 @@ router.get('/:id', (req, res, next) => {
         },
     }).then(book => {
         res.redirect(`/books/${req.params.id}/${book[0].dataValues.title.replace(/ /g, '_')}`);
+    }).catch(error => {
+
     });
 });
 
