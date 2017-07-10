@@ -17,8 +17,10 @@ const today = moment().format('YYYY[-]MM[-]DD');
 router.get('/', (req, res, next) => {
 
     if (req.query.page === undefined && req.query.filter === undefined) {
-        res.redirect('/books?page=1');
+        //     res.redirect('/books?page=1');
+        req.query.page = 1;
     }
+
 
     let bookQuery = Book.findAndCountAll({
         order: [
@@ -26,7 +28,6 @@ router.get('/', (req, res, next) => {
         ],
         limit: 10,
         offset: (req.query.page * 10) - 10,
-        // include: Loan
     });
 
     if (req.query.filter === 'overdue') {
@@ -64,6 +65,8 @@ router.get('/', (req, res, next) => {
         });
     }
 
+    if (req.query.search) {}
+
     bookQuery.then(books => {
 
         const count = Math.round(books.count / 10);
@@ -86,10 +89,77 @@ router.get('/', (req, res, next) => {
 
         const title = "Books";
 
-        res.render('all', { count, currentPage, filter, bookData, columns, title, content });
+        res.render('all', {
+            count,
+            currentPage,
+            filter,
+            bookData,
+            columns,
+            title,
+            content
+        });
 
     }).catch(error => {
         res.status(500).send(error);
+    });
+});
+
+router.post('/', (req, res, next) => {
+
+    if (req.query.page === undefined && req.query.filter === undefined) {
+        //     res.redirect('/books?page=1');
+        req.query.page = 1;
+    }
+
+    Book.findAndCountAll({
+        where: {
+            title: {
+                $like: `%${ req.body.title }%`,
+            },
+            author: {
+                $like: `%${ req.body.author }%`,
+            },
+            genre: {
+                $like: `%${ req.body.genre }%`,
+            },
+            first_published: {
+                $like: `%${ req.body.first_published }%`,
+            }
+        },
+        limit: 10,
+        offset: (req.query.page * 10) - 10,
+    }).then(books => {
+
+        const count = Math.round(books.count / 10);
+
+        currentPage = req.query.page;
+        filter = req.query.filter;
+
+        const columns = [
+            "Title",
+            "Author",
+            "Genre",
+            "First Published"
+        ];
+
+        let bookData = books.rows.map(book => {
+            return book.get({
+                plain: true
+            });
+        });
+
+
+        const title = "Books";
+
+        res.render('all', {
+            count,
+            currentPage,
+            filter,
+            bookData,
+            columns,
+            title,
+            content
+        });
     });
 });
 

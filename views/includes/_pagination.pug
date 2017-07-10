@@ -4,4 +4,4 @@ if count > 1
     ul.pagination
         while page <= count
             li
-                a.button(href=`/${ content }?page=${ page }${ filter ? `&filter=${filter}` : ''}`)= page++ 
+                a.button(href=`/${ content }?page=${ page }${ search ? `&search=${ search }` : ''}${ filter ? `&filter=${filter}` : ''}`)= page++ 

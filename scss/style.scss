@@ -1,26 +1,35 @@
+$library-hover-green: #01b189;
+$library-green: #019875;
+$light-gray: #e7e7e7;
+$button-blue: #4b6a88;
+$button-blue-hover: #547798;
+$header-border: #D8B493;
+// start main styles
 body {
     padding: 50px;
     font: 18px "Garamond", serif;
 }
 
 a {
-    color: #019875;
+    color: $library-green;
     text-decoration: none;
     font-weight: bold;
-}
-
-a:hover {
-    color: black;
+    &:hover {
+        color: black;
+    }
 }
 
 a.button, input[type=submit] {
     color: white;
-    background: #019875;
+    background: $library-green;
     font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
     padding: 10px 14px 12px;
     font-size: 14px;
     border-radius: 2px;
     cursor: pointer;
+    &:hover {
+        background-color: $library-hover-green;
+    }
 }
 
 form a.button, input[type=submit] {
@@ -29,10 +38,6 @@ form a.button, input[type=submit] {
 
 input[type=submit] {
     border: 0;
-}
-
-a.button:hover, input[type=submit]:hover {
-    background-color: #01b189;
 }
 
 p {
@@ -47,13 +52,18 @@ ul {
 }
 
 nav {
-    border-bottom: 2px solid #D8B493;
-}
-
-nav ul li {
-    display: inline-block;
-    list-style: none;
-    padding-left: 7px;
+    border-bottom: 2px solid $header-border;
+    ul li {
+        display: inline-block;
+        list-style: none;
+        padding-left: 7px;
+        &:after {
+            content: " | ";
+        }
+        &:last-child:after {
+            content: none;
+        }
+    }
 }
 
 .pagination {
@@ -66,41 +76,37 @@ nav ul li {
     }
 }
 
-nav ul li:after {
-    content: " | ";
-}
-
-nav ul li:last-child:after {
-    content: none;
+.search-form {
+    label {
+        min-width: 40px;
+        margin-left: 10px;
+    }
 }
 
 h2 {
-    border-top: 2px solid #e7e7e7;
+    border-top: 2px solid $light-gray;
     padding-top: 20px;
 }
 
 th {
-    border-bottom: 2px solid #D8B493;
+    border-bottom: 2px solid $header-border;
     text-align: left;
     padding: 5px 20px 5px 10px;
 }
 
 tr {
     min-height: 50px;
-}
-
-tr .button {
-    background-color: #4b6a88;
-    padding: 4px 8px 5px;
-    font-weight: normal;
-}
-
-tr .button:hover {
-    background-color: #547798;
-}
-
-tr:nth-child(2n) {
-    background: #E7E7E7;
+    .button {
+        background-color: $button-blue;
+        padding: 4px 8px 5px;
+        font-weight: normal;
+    }
+    .button:hover {
+        background-color: $button-blue-hover;
+    }
+    &:nth-child(2n) {
+        background: $light-gray;
+    }
 }
 
 td {
@@ -118,7 +124,7 @@ input {
     font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
     font-size: 14px;
     border-radius: 2px;
-    border-color: #E7E7E7;
+    border-color: $light-gray;
 }
 
 input[type=text], select {

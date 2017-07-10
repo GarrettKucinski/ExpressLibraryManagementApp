@@ -1,0 +1,18 @@
+form.search-form(action=`/${ content }`, method='post')
+    p
+        //- label(for='search') Search 
+        //- input(type='text', name='search')
+
+        label(for='title') Title 
+        input(type='text', name='title')
+
+        label(for='author') Author 
+        input(type='text', name='author')
+
+        label(for='genre') Genre 
+        input(type='text', name='genre')
+
+        label(for='first_published') First Published 
+        input(type='text', name='first_published')
+
+        input(type='submit', value='Search')
