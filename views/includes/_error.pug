@@ -1,5 +1,5 @@
 if errors
     h2.error Error! 
-    for error in errors
-        ul.error
+    ul.error
+        for error in errors
             li= error.message

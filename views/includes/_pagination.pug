@@ -5,3 +5,4 @@ if count > 1
         while page <= count
             li
                 a.button(href=`/${ content }?page=${ page }${ search ? `&search=${ search }&title=${ search_title }&author=${ author }&genre=${ genre }&first_published=${ first_published }` : ''}${ filter ? `&filter=${filter}` : ''}`)= page++ 
+

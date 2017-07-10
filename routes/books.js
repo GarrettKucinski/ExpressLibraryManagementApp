@@ -187,9 +187,9 @@ router.post('/new', (req, res, next) => {
                 plain: true
             });
 
-            res.render('new', { detail, book: bookData, errors: error.errors, title: 'New Book', content });
-        } else {
-            throw error;
+            const errors = error.errors;
+
+            res.render('new', { detail, book: bookData, errors, title: 'New Book', content });
         }
     }).catch(error => {
         res.status(500).send(error);
