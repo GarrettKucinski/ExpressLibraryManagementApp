@@ -74,13 +74,11 @@ module.exports = function(sequelize, DataTypes) {
                 this.first_name = split[0];
                 this.last_name = split[1];
             }
-        },
-        classMethods: {
-            associate: function(models) {
-                // associations can be defined here
-                Patron.hasMany(models.Loan, { foreignKey: 'patron_id' });
-            }
         }
     });
+    Patron.associate = function(models) {
+        // associations can be defined here
+        Patron.hasMany(models.Loan, { foreignKey: 'patron_id' });
+    };
     return Patron;
 };

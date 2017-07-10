@@ -50,14 +50,12 @@ module.exports = function(sequelize, DataTypes) {
         returned_on: {
             type: DataTypes.DATEONLY
         }
-    }, {
-        classMethods: {
-            associate: function(models) {
-                // associations can be defined here
-                Loan.belongsTo(models.Book, { foreignKey: "book_id" });
-                Loan.belongsTo(models.Patron, { foreignKey: "patron_id" });
-            }
-        }
     });
+    Loan.associate = function(models) {
+        // associations can be defined here
+        Loan.belongsTo(models.Book, { foreignKey: "book_id" });
+        Loan.belongsTo(models.Patron, { foreignKey: "patron_id" });
+    };
+
     return Loan;
 };
