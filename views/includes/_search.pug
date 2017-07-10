@@ -1,18 +1,7 @@
 form.search-form(action=`/${ content }?search=true`, method='post')
-    p
-        //- label(for='search') Search 
-        //- input(type='text', name='search')
+    for column in columns
+        p
+            label(for=`${ column.split(' ').join('_').toLowerCase() }`)= column  
+            input(type='text', name=`${ column.split(' ').join('_').toLowerCase() }`)
 
-        label(for='title') Title 
-        input(type='text', name='title')
-
-        label(for='author') Author 
-        input(type='text', name='author')
-
-        label(for='genre') Genre 
-        input(type='text', name='genre')
-
-        label(for='first_published') First Published 
-        input(type='text', name='first_published')
-
-        input(type='submit', value='Search')
+    input(type='submit', value='Search')
