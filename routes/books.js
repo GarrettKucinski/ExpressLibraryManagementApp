@@ -10,6 +10,11 @@ const Patron = require('../models').Patron;
 let detail;
 let currentPage;
 let filter;
+let search;
+let search_title;
+let genre;
+let author;
+let first_published;
 
 const content = 'books';
 const today = moment().format('YYYY[-]MM[-]DD');
@@ -21,14 +26,18 @@ router.get('/', (req, res, next) => {
         req.query.page = 1;
     }
 
+    let bookQuery;
+    search = req.query.search ? req.query.search : false;
 
-    let bookQuery = Book.findAndCountAll({
-        order: [
-            ['title', 'ASC']
-        ],
-        limit: 10,
-        offset: (req.query.page * 10) - 10,
-    });
+    if (req.query.search === undefined) {
+        bookQuery = Book.findAndCountAll({
+            order: [
+                ['title', 'ASC']
+            ],
+            limit: 10,
+            offset: (req.query.page * 10) - 10,
+        });
+    }
 
     if (req.query.filter === 'overdue') {
         bookQuery = Book.findAndCountAll({
@@ -65,7 +74,26 @@ router.get('/', (req, res, next) => {
         });
     }
 
-    if (req.query.search) {}
+    if (req.query.search) {
+        bookQuery = Book.findAndCountAll({
+            where: {
+                title: {
+                    $like: `%${ req.query.title }%`,
+                },
+                author: {
+                    $like: `%${ req.query.author }%`,
+                },
+                genre: {
+                    $like: `%${ req.query.genre }%`,
+                },
+                first_published: {
+                    $like: `%${ req.query.first_published }%`,
+                }
+            },
+            limit: 10,
+            offset: (req.query.page * 10) - 10,
+        });
+    }
 
     bookQuery.then(books => {
 
@@ -73,6 +101,10 @@ router.get('/', (req, res, next) => {
 
         currentPage = req.query.page;
         filter = req.query.filter;
+        search_title = req.query.title;
+        author = req.query.author;
+        genre = req.query.genre;
+        first_published = req.query.first_published;
 
         const columns = [
             "Title",
@@ -96,7 +128,12 @@ router.get('/', (req, res, next) => {
             bookData,
             columns,
             title,
-            content
+            content,
+            search_title,
+            author,
+            genre,
+            first_published,
+            search
         });
 
     }).catch(error => {
@@ -129,37 +166,7 @@ router.post('/', (req, res, next) => {
         limit: 10,
         offset: (req.query.page * 10) - 10,
     }).then(books => {
-
-        const count = Math.round(books.count / 10);
-
-        currentPage = req.query.page;
-        filter = req.query.filter;
-
-        const columns = [
-            "Title",
-            "Author",
-            "Genre",
-            "First Published"
-        ];
-
-        let bookData = books.rows.map(book => {
-            return book.get({
-                plain: true
-            });
-        });
-
-
-        const title = "Books";
-
-        res.render('all', {
-            count,
-            currentPage,
-            filter,
-            bookData,
-            columns,
-            title,
-            content
-        });
+        res.redirect(`/books?page=1&search=true&title=${ req.body.title ? req.body.title : '' }&author=${ req.body.author ? req.body.author : ''}&genre=${ req.body.genre ? req.body.genre : ''}&first_published=${ req.body.first_published ? req.body.first_published : ''}`);
     });
 });
 
