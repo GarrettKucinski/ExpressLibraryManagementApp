@@ -7,6 +7,9 @@ const Book = require('../models').Book;
 const Loan = require('../models').Loan;
 const Patron = require('../models').Patron;
 
+let currentPage;
+let filter;
+
 const content = 'loans';
 
 const today = moment().format('YYYY[-]MM[-]DD');
@@ -120,9 +123,10 @@ router.get('/', (req, res, next) => {
             "Return On"
         ];
 
-        const count = Math.round(loans.count / 10);
+        const count = Math.ceil(loans.count / 10);
 
-        // currentPage = req.query.page;
+        currentPage = req.query.page;
+        filter = req.query.filter;
 
         let loanedBooks = loans.rows.map(loan => {
             return loan.get({
@@ -132,7 +136,7 @@ router.get('/', (req, res, next) => {
 
         const title = "Loans";
 
-        res.render('all', { loanedBooks, count, columns, title, content });
+        res.render('all', { loanedBooks, count, filter, currentPage, columns, title, content });
     });
 });
 

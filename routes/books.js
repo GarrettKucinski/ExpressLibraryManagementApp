@@ -9,6 +9,7 @@ const Patron = require('../models').Patron;
 
 let detail;
 let currentPage;
+let filter;
 
 const content = 'books';
 const today = moment().format('YYYY[-]MM[-]DD');
@@ -68,6 +69,7 @@ router.get('/', (req, res, next) => {
         const count = Math.round(books.count / 10);
 
         currentPage = req.query.page;
+        filter = req.query.filter;
 
         const columns = [
             "Title",
@@ -84,7 +86,7 @@ router.get('/', (req, res, next) => {
 
         const title = "Books";
 
-        res.render('all', { count, currentPage, bookData, columns, title, content });
+        res.render('all', { count, currentPage, filter, bookData, columns, title, content });
 
     }).catch(error => {
         res.status(500).send(error);
