@@ -78,13 +78,13 @@ router.get('/', (req, res, next) => {
         bookQuery = Book.findAndCountAll({
             where: {
                 title: {
-                    $like: `%${ req.query.title }%`,
+                    $like: `%${ req.query.title.toLowerCase() }%`,
                 },
                 author: {
-                    $like: `%${ req.query.author }%`,
+                    $like: `%${ req.query.author.toLowerCase() }%`,
                 },
                 genre: {
-                    $like: `%${ req.query.genre }%`,
+                    $like: `%${ req.query.genre.toLowerCase() }%`,
                 },
                 first_published: {
                     $like: `%${ req.query.first_published }%`,
@@ -97,7 +97,7 @@ router.get('/', (req, res, next) => {
 
     bookQuery.then(books => {
 
-        const count = Math.round(books.count / 10);
+        const count = Math.ceil(books.count / 10);
 
         currentPage = req.query.page;
         filter = req.query.filter;
