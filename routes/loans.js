@@ -179,6 +179,7 @@ router.get('/new', (req, res, next) => {
 });
 
 router.post('/new', (req, res, next) => {
+    // const loandate = req.body.return_by.toString().slice(0, 10);
     Loan.create(req.body).then(() => {
         res.redirect('/loans');
     }).catch(error => {
