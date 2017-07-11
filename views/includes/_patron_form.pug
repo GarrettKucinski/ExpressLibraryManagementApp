@@ -1,3 +1,4 @@
+include ./_error
 h1= title     
 form(action=`${ detail ? `/${ content }/${patronDetails.id}/${ patronDetails.first_name }_${ patronDetails.last_name }` : `/${ content }/new`}`, method="post")
     p

@@ -1,3 +1,4 @@
+include ./_error
 h1= title
 form(action=`${ detail ? `/${ content }/${ book.id }/${ book.title.replace(/ /g, '_') }` : `/${content}/new` }`, method="post")
     p
