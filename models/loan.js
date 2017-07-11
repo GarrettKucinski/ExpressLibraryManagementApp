@@ -59,6 +59,10 @@ module.exports = function(sequelize, DataTypes) {
                     args: /[!@#$%^&*()_+=<>,.'";:`~]/ig,
                     msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
                 },
+                isAfter: {
+                    args: today,
+                    msg: 'Loaned on date must be today or in the future.'
+                },
                 isDate: {
                     msg: 'The return by date must be in the correct format. ex. 2017-07-08'
                 }
