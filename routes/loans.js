@@ -214,11 +214,11 @@ router.post('/new', (req, res, next) => {
         });
 
         if (special.test(req.body.loaned_on)) {
-            errors.push(new Error('LOANS The return by date must be in the correct format. ex. 2017-07-08'));
+            errors.push(new Error('The return by date must be in the correct format. ex. 2017-07-08'));
         }
 
         if (special.test(req.body.return_by)) {
-            errors.push(new Error('LOANS The return by date must be in the correct format. ex. 2017-07-08'));
+            errors.push(new Error('The return by date must be in the correct format. ex. 2017-07-08'));
         }
 
         if (errors.length) {
