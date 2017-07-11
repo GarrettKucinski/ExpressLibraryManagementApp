@@ -179,8 +179,14 @@ router.get('/new', (req, res, next) => {
 });
 
 router.post('/new', (req, res, next) => {
-    // const loandate = req.body.return_by.toString().slice(0, 10);
-    Loan.create(req.body).then(() => {
+    const loanData = {
+        book_id: req.body.book_id,
+        patron_id: req.body.patron_id,
+        loaned_on: req.body.loaned_on.trim(),
+        return_by: req.body.return_by.trim()
+    };
+
+    Loan.create(loanData).then(() => {
         res.redirect('/loans');
     }).catch(error => {
         if (error.name === "SequelizeValidationError") {

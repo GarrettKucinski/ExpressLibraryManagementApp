@@ -26,6 +26,14 @@ module.exports = function(sequelize, DataTypes) {
                 notEmpty: {
                     msg: 'The you must specify the loaned on date.'
                 },
+                is: {
+                    args: /^(\d{4})-((02-(0[1-9]|[12]\d))|((0[469]|11)-(0[1-9]|[12]\d|30))|((0[13578]|1[02])-(0[1-9]|[12]\d|3[01])))$/ig,
+                    msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
+                },
+                not: {
+                    args: /[!@#$%^&*()_+=<>,.'";:`~]/ig,
+                    msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
+                },
                 isDate: {
                     msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
                 },
@@ -40,6 +48,14 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 notEmpty: {
                     msg: 'You must specify a return by date.'
+                },
+                is: {
+                    args: /^(\d{4})-((02-(0[1-9]|[12]\d))|((0[469]|11)-(0[1-9]|[12]\d|30))|((0[13578]|1[02])-(0[1-9]|[12]\d|3[01])))$/ig,
+                    msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
+                },
+                not: {
+                    args: /[!@#$%^&*()_+=<>,.'";:`~]/ig,
+                    msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
                 },
                 isDate: {
                     msg: 'The return by date must be in the correct format. ex. 2017-07-08'
