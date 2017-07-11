@@ -1,4 +1,7 @@
 'use strict';
+const moment = require('moment');
+const today = moment().format('YYYY[-]MM[-]DD');
+
 module.exports = function(sequelize, DataTypes) {
     var Loan = sequelize.define('Loan', {
         book_id: {
@@ -24,11 +27,12 @@ module.exports = function(sequelize, DataTypes) {
                     msg: 'The you must specify the loaned on date.'
                 },
                 is: {
-                    args: /[0-9]\-/gim,
+                    args: /^[/d{2}/-/d{2}/-/d{4}]$/gim,
                     msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
                 },
-                isDate: {
-                    msg: 'The loaned on field must contain a valid date. ex. 2017-07-08'
+                isAfter: {
+                    args: today,
+                    msg: 'Loaned on date must be today of in the future.'
                 }
             }
         },
@@ -39,11 +43,8 @@ module.exports = function(sequelize, DataTypes) {
                     msg: 'You must specify a return by date.'
                 },
                 is: {
-                    args: /[0-9]\-/gim,
+                    args: /^[/d{2}/-/d{2}/-/d{4}]$/gim,
                     msg: 'The return by date must be in the correct format. ex. 2017-07-08'
-                },
-                isDate: {
-                    msg: 'The return by date field must contain a valid date. ex. 2017-07-08'
                 }
             }
         },
