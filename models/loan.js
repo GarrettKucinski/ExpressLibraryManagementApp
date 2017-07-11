@@ -30,16 +30,18 @@ module.exports = function(sequelize, DataTypes) {
                     args: /^(\d{4})-((02-(0[1-9]|[12]\d))|((0[469]|11)-(0[1-9]|[12]\d|30))|((0[13578]|1[02])-(0[1-9]|[12]\d|3[01])))$/ig,
                     msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
                 },
-                not: {
-                    args: /[!@#$%^&*()_+=<>,.'";:`~]/ig,
-                    msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
-                },
                 isDate: {
                     msg: 'The loaned on date must be in the correct format. ex. 2017-07-08'
                 },
                 isAfter: {
                     args: today,
                     msg: 'Loaned on date must be today or in the future.'
+                },
+                isNotSpecial(value) {
+                    const special = /[!@#$%^&*()_+=<>,.'";:`~]+/ig;
+                    if (value.match(special)) {
+                        throw new Error('The loaned on date must be in the correct format. ex. 2017-07-08');
+                    }
                 }
             }
         },

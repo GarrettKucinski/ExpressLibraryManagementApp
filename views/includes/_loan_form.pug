@@ -13,9 +13,9 @@ form(action=`/${content}/new`, method="post")
                 option(value=patron.id)= patron.fullName 
     p
         label(for="loaned_on") Loaned on
-        input(id="loaned_on", name="loaned_on", type="text", value=loanedOn)
+        input(id="loaned_on", name="loaned_on", type="text", value=`${ today ? today : '' }`)
     p
         label(for="return_by") Return by
-        input(id="return_by", name="return_by", type="text", value=returnBy)
+        input(id="return_by", name="return_by", type="text", value=`${ aWeekFromNow ? aWeekFromNow : '' }`)
     p
         input(type="submit", value="Create New Loan")

@@ -174,60 +174,66 @@ router.get('/new', (req, res, next) => {
         const loanedOn = today;
         const returnBy = aWeekFromNow;
 
-        res.render('new', { content, books, patrons, loanedOn, returnBy });
+        res.render('new', { content, books, patrons, today, aWeekFromNow });
     });
 });
 
 router.post('/new', (req, res, next) => {
-    const loanData = {
-        book_id: req.body.book_id,
-        patron_id: req.body.patron_id,
-        loaned_on: req.body.loaned_on.trim(),
-        return_by: req.body.return_by.trim()
-    };
 
-    Loan.create(loanData).then(() => {
-        res.redirect('/loans');
-    }).catch(error => {
-        if (error.name === "SequelizeValidationError") {
-            const books = Book.findAll({
-                attributes: [
-                    ['id', 'id'],
-                    ['title', 'title']
-                ]
+    const books = Book.findAll({
+        attributes: [
+            ['id', 'id'],
+            ['title', 'title']
+        ]
+    });
+
+    const patrons = Patron.findAll({
+        attributes: [
+            ['id', 'id'],
+            [Patron.sequelize.literal('first_name || " " || last_name'), 'name'],
+        ]
+    });
+
+    Promise.all([books, patrons]).then(data => {
+        const special = /[!@#$%^&*()_+=<>,.'";:`~]+/ig;
+        const dateMatch = /^\d{4}-\d{2}-\d{2}$/igm;
+        const errors = [];
+
+        const books = data[0].map(book => {
+            return Object.assign({}, {
+                id: book.dataValues.id,
+                title: book.dataValues.title
             });
+        });
 
-            const patrons = Patron.findAll({
-                attributes: [
-                    ['id', 'id'],
-                    [Patron.sequelize.literal('first_name || " " || last_name'), 'name'],
-                ]
+        const patrons = data[1].map(patron => {
+            return Object.assign({}, {
+                id: patron.dataValues.id,
+                fullName: patron.dataValues.name
             });
+        });
 
-            Promise.all([books, patrons]).then(data => {
-                const books = data[0].map(book => {
-                    return Object.assign({}, {
-                        id: book.dataValues.id,
-                        title: book.dataValues.title
-                    });
-                });
-
-                const patrons = data[1].map(patron => {
-                    return Object.assign({}, {
-                        id: patron.dataValues.id,
-                        fullName: patron.dataValues.name
-                    });
-                });
-                const loanedOn = today;
-                const returnBy = aWeekFromNow;
-
-                res.render('new', { loanedOn, returnBy, books, patrons, errors: error.errors, title: 'New Loan', content });
-            });
-        } else {
-            throw error;
+        if (special.test(req.body.loaned_on)) {
+            errors.push(new Error('LOANS The return by date must be in the correct format. ex. 2017-07-08'));
         }
-    }).catch(error => {
-        res.status(500).send(error);
+
+        if (special.test(req.body.return_by)) {
+            errors.push(new Error('LOANS The return by date must be in the correct format. ex. 2017-07-08'));
+        }
+
+        if (errors.length) {
+            res.render('new', { today, aWeekFromNow, books, patrons, errors, title: 'New Loan', content });
+        } else {
+            Loan.create(req.body).then(() => {
+                res.redirect('/loans');
+            }).catch(error => {
+                if (error.name === 'SequelizeValidationError') {
+                    res.render('new', { today, aWeekFromNow, books, patrons, errors: error.errors, title: 'New Loan', content });
+                }
+            }).catch(error => {
+                res.status(500).send(error);
+            });
+        }
     });
 });
 
