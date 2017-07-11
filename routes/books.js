@@ -60,6 +60,7 @@ router.get('/', (req, res, next) => {
 
     if (req.query.filter === 'checked_out') {
         bookQuery = Book.findAndCountAll({
+            distinct: 'title',
             order: [
                 ['title', 'ASC']
             ],
@@ -97,8 +98,6 @@ router.get('/', (req, res, next) => {
 
     bookQuery.then(books => {
 
-        const count = Math.ceil(books.count / 10);
-
         currentPage = req.query.page;
         filter = req.query.filter;
         search_title = req.query.title;
@@ -118,6 +117,8 @@ router.get('/', (req, res, next) => {
                 plain: true
             });
         });
+
+        const count = Math.ceil(books.count / 10);
 
         const title = "Books";
 
