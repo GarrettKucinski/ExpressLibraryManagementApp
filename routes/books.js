@@ -41,6 +41,7 @@ router.get('/', (req, res, next) => {
 
     if (req.query.filter === 'overdue') {
         bookQuery = Book.findAndCountAll({
+            distinct: 'title',
             order: [
                 ['title', 'ASC']
             ],
